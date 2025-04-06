@@ -6,55 +6,55 @@ export class RuleEngine {
   private operators: Map<string, any> = new Map();
   private defaultOperators: {
     key: string;
-    val: (a: any, b: any) => boolean;
+    val: (a: any, b: any) => Promise<boolean>;
   }[] = [
     {
       key: "%like%",
-      val: (a, b) => _.includes(a, b),
+      val: (a, b) => Promise.resolve(_.includes(a, b)),
     },
     {
       key: "%like",
-      val: (a, b) => _.endsWith(a, b),
+      val: (a, b) => Promise.resolve(_.endsWith(a, b)),
     },
     {
       key: "like%",
-      val: (a, b) => _.startsWith(a, b),
+      val: (a, b) => Promise.resolve(_.startsWith(a, b)),
     },
     {
       key: "===",
-      val: (a, b) => a === b,
+      val: (a, b) => Promise.resolve(a === b),
     },
     {
       key: "==",
-      val: (a, b) => a == b,
+      val: (a, b) => Promise.resolve(a == b),
     },
     {
       key: "!==",
-      val: (a, b) => a !== b,
+      val: (a, b) => Promise.resolve(a !== b),
     },
     {
       key: "!=",
-      val: (a, b) => a != b,
+      val: (a, b) => Promise.resolve(a != b),
     },
     {
       key: ">",
-      val: (a, b) => a > b,
+      val: (a, b) => Promise.resolve(a > b),
     },
     {
       key: ">=",
-      val: (a, b) => a >= b,
+      val: (a, b) => Promise.resolve(a >= b),
     },
     {
       key: "<",
-      val: (a, b) => a < b,
+      val: (a, b) => Promise.resolve(a < b),
     },
     {
       key: "<=",
-      val: (a, b) => a <= b,
+      val: (a, b) => Promise.resolve(a <= b),
     },
     {
       key: "in",
-      val: (a, b) => Array.isArray(a) && a.includes(b),
+      val: (a, b) => Promise.resolve(Array.isArray(a) && a.includes(b)),
     },
   ];
 
@@ -67,17 +67,17 @@ export class RuleEngine {
     this.defaultOperators.forEach((op) => this.operators.set(op.key, op.val));
   }
 
-  private evaluateCondition(
+  private async evaluateCondition(
     fact: object,
     { path, operator, value }: RuleCondition
-  ): boolean {
+  ): Promise<boolean> {
     const actual = _.get(fact, path, false);
     const fn = this.operators.get(operator);
-    return fn ? fn(actual, value) : false;
+    return fn ? await fn(actual, value) : Promise.resolve(false);
   }
 
   private eventRuleCallback(fact: object) {
-    return (cond: any) => {
+    return async (cond: any) => {
       if (cond.all || cond.any) {
         return this.evaluateRule(fact, cond);
       } else {
@@ -86,20 +86,28 @@ export class RuleEngine {
     };
   }
 
-  private evaluateRule(fact: object, rule: any): boolean {
+  private async evaluateRule(fact: object, rule: any): Promise<boolean> {
     if (rule.all) {
-      return rule.all.every(this.eventRuleCallback(fact));
+      return (
+        await Promise.all(rule.all.map(this.eventRuleCallback(fact)))
+      ).every((result) => result);
     }
     if (rule.any) {
-      return rule.any.some((cond: any) => this.evaluateCondition(fact, cond));
+      return (
+        await Promise.all(
+          rule.any.map(
+            async (cond: any) => await this.evaluateCondition(fact, cond)
+          )
+        )
+      ).some((result) => result);
     }
     return false;
   }
 
-  public setOperator(
+  public async setOperator(
     symbol: string,
-    callback: (a: any, b: any) => boolean
-  ): boolean {
+    callback: (a: any, b: any) => Promise<boolean>
+  ): Promise<boolean> {
     if (!this.operators.has(symbol)) {
       this.operators.set(symbol, callback);
       return true;
@@ -107,7 +115,7 @@ export class RuleEngine {
     return false;
   }
 
-  public setRule(name: string, rule: object): boolean {
+  public async setRule(name: string, rule: object): Promise<boolean> {
     if (!this.rules.has(name)) {
       this.rules.set(name, rule);
       return true;
@@ -115,9 +123,10 @@ export class RuleEngine {
     return false;
   }
 
-  public runRule(fact: object, ruleIndex: string): any {
+  public async runRule(fact: object, ruleIndex: string): Promise<any> {
     const rule = this.rules.get(ruleIndex);
-    if (this.evaluateRule(fact, rule.conditions)) {
+    const result = await this.evaluateRule(fact, rule.conditions);
+    if (result) {
       return rule.onSuccess(fact);
     }
     return rule.onFail(fact);
