@@ -3,15 +3,10 @@
   "version": "1.0.15",
   "license": "MIT",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "exports": {
-    "import": "./dist/index.mjs",
-    "require": "./dist/index.js"
-  },
   "publishConfig": {
     "access": "public"
   },
