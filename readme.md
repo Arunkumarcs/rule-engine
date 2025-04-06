@@ -115,11 +115,22 @@ r.setRule("level3", {
       },
     ],
   },
-  onSuccess: (fact) => console.log("🇺🇸 US adult2 SCUCCESS"),
-  onFail: (fact) => console.log("🇺🇸 US adult2 FAILES"),
+  onSuccess: async (fact) => console.log("🇺🇸 US adult2 SCUCCESS"),
+  onFail: async (fact) => console.log("🇺🇸 US adult2 FAILES"),
 });
 r.runRule(fact, "level3"); // Evaluates the new rule "level3" against the fact
 ```
+
+## Adding Custom Operator
+
+You can add a custom operator to the rule engine using the `setOperator` method. Here's an example:
+
+```javascript
+r.setOperator("eq", async (a, b) => a === b);
+```
+
+This will add a new operator `eq` to the rule engine, which checks for strict equality.
+
 
 ## Testing
 
