@@ -3,7 +3,7 @@
 A simple rule engine for evaluating conditions and executing actions based on predefined rules.
 
 
-# JSON Rules Engine Inspired Rule Engine
+# Inspired from [json-rules-engine](https://www.npmjs.com/package/json-rules-engine?activeTab=readme)
 ### A simple rules engine for evaluating conditions and executing actions based on predefined rules.
 
 
@@ -36,7 +36,7 @@ Creates a new instance of the RuleEngine with the provided rules.
 
 ### `setRule(name, rule)`
 
-Sets a new rule or updates an existing rule.
+Add  new rule.
 
 ### `runRule(fact, ruleIndex)`
 
@@ -44,7 +44,7 @@ Evaluates the rule specified by `ruleIndex` against the provided `fact`.
 
 ### `setOperator(symbol, callback)`
 
-Sets a custom operator for the rule engine.
+Add new custom operator for the rule engine.
 
 ## Example Rules
 
