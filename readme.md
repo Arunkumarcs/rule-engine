@@ -56,12 +56,10 @@ const rules = {
         { path: "user.age", operator: ">=", value: 18 },
         { path: "user.country", operator: "===", value: "US" },
         {
-          conditions: {
-            all: [
-              { path: "user.age", operator: "<=", value: 21 },
-              { path: "name", operator: "==", value: "dd" },
-            ],
-          },
+          all: [
+            { path: "user.age", operator: "<=", value: 21 },
+            { path: "name", operator: "==", value: "dd" },
+          ],
         },
       ],
     },
@@ -106,12 +104,10 @@ r.setRule("level3", {
       { path: "user.age", operator: ">=", value: 18 },
       { path: "user.country", operator: "===", value: "US" },
       {
-        conditions: {
-          all: [
-            { path: "user.age", operator: "<=", value: 21 },
-            { path: "name", operator: "==", value: "d" },
-          ],
-        },
+        all: [
+          { path: "user.age", operator: "<=", value: 21 },
+          { path: "name", operator: "==", value: "d" },
+        ],
       },
     ],
   },
