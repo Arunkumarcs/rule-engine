@@ -9,6 +9,9 @@ describe("RuleEngine", () => {
         all: [
           { path: "age", operator: ">", value: 18 },
           { path: "country", operator: "==", value: "USA" },
+          {
+            all: [{ path: "name", operator: "==", value: "John Doe" }],
+          },
         ],
       },
       onSuccess: () => "Success",

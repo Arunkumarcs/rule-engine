@@ -86,7 +86,7 @@ export class RuleEngine {
 
   private eventRuleCallback(fact: object) {
     return (cond: any) => {
-      if (cond.conditions) {
+      if (cond.all || cond.any) {
         return this.evaluateRule(fact, cond);
       } else {
         return this.evaluateCondition(fact, cond);
@@ -95,14 +95,11 @@ export class RuleEngine {
   }
 
   private evaluateRule(fact: object, rule: any): boolean {
-    const { conditions } = rule;
-    if (conditions.all) {
-      return conditions.all.every(this.eventRuleCallback(fact));
+    if (rule.all) {
+      return rule.all.every(this.eventRuleCallback(fact));
     }
-    if (conditions.any) {
-      return conditions.any.some((cond: any) =>
-        this.evaluateCondition(fact, cond)
-      );
+    if (rule.any) {
+      return rule.any.some((cond: any) => this.evaluateCondition(fact, cond));
     }
     return false;
   }
@@ -128,7 +125,7 @@ export class RuleEngine {
 
   public runRule(fact: object, ruleIndex: string): any {
     const rule = this.rules.get(ruleIndex);
-    if (this.evaluateRule(fact, rule)) {
+    if (this.evaluateRule(fact, rule.conditions)) {
       return rule.onSuccess(fact);
     }
     return rule.onFail(fact);
