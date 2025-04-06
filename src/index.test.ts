@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import RuleEngine from "./index";
+import { RuleEngine } from "./index";
 
 describe("RuleEngine", () => {
   it("should evaluate a rule with all conditions", () => {

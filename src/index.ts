@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { RuleMap, RuleCondition } from "./types";
 
-export default class RuleEngine {
+export class RuleEngine {
   private rules: Map<string, any> = new Map();
   private operators: Map<string, any> = new Map();
   private defaultOperators: {
