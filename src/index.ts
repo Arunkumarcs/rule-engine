@@ -63,16 +63,8 @@ export class RuleEngine {
   }
 
   private initial(rules: RuleMap) {
-    for (const key in rules) {
-      if (Object.prototype.hasOwnProperty.call(rules, key)) {
-        let val = rules[key];
-        this.rules.set(key, val);
-      }
-    }
-
-    for (const key of this.defaultOperators) {
-      this.operators.set(key.key, key.val);
-    }
+    this.rules = new Map(Object.entries(rules));
+    this.defaultOperators.forEach((op) => this.operators.set(op.key, op.val));
   }
 
   private evaluateCondition(
