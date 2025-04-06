@@ -1,4 +1,4 @@
-import { get, startsWith, endsWith, includes } from "lodash";
+import * as _ from "lodash";
 import { RuleMap, RuleCondition } from "./types";
 
 export default class RuleEngine {
@@ -10,15 +10,15 @@ export default class RuleEngine {
   }[] = [
     {
       key: "%like%",
-      val: (a, b) => includes(a, b),
+      val: (a, b) => _.includes(a, b),
     },
     {
       key: "%like",
-      val: (a, b) => endsWith(a, b),
+      val: (a, b) => _.endsWith(a, b),
     },
     {
       key: "like%",
-      val: (a, b) => startsWith(a, b),
+      val: (a, b) => _.startsWith(a, b),
     },
     {
       key: "===",
@@ -79,7 +79,7 @@ export default class RuleEngine {
     fact: object,
     { path, operator, value }: RuleCondition
   ): boolean {
-    const actual = get(fact, path);
+    const actual = _.get(fact, path);
     const fn = this.operators.get(operator);
     return fn ? fn(actual, value) : false;
   }
