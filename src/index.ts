@@ -79,7 +79,7 @@ export default class RuleEngine {
     fact: object,
     { path, operator, value }: RuleCondition
   ): boolean {
-    const actual = _.get(fact, path);
+    const actual = _.get(fact, path, false);
     const fn = this.operators.get(operator);
     return fn ? fn(actual, value) : false;
   }
