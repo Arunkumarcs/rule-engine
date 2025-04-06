@@ -7,6 +7,14 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arunkumarcs/-arunkumar_h-rule-engine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Arunkumarcs/-arunkumar_h-rule-engine/issues"
+  },
+  "homepage": "https://github.com/Arunkumarcs/-arunkumar_h-rule-engine/tree/main#readme",
   "publishConfig": {
     "access": "public"
   },
