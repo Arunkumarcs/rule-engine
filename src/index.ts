@@ -3,7 +3,8 @@ import { RuleMap, RuleCondition, ConditionGroup } from "./types";
 
 export class RuleEngine {
   private rules: Map<string, any> = new Map();
-  private operators: Map<string, any> = new Map();
+  private operators: Map<string, (a: any, b: any) => Promise<boolean>> =
+    new Map();
   private defaultOperators: {
     key: string;
     val: (a: any, b: any) => Promise<boolean>;
@@ -75,6 +76,11 @@ export class RuleEngine {
   ): Promise<boolean> {
     const actual = _.get(fact, path, false);
     const fn = this.operators.get(operator);
+
+    if (!fn) {
+      throw new Error(`Operator "${operator}" not found`);
+    }
+
     return fn ? await fn(actual, value) : Promise.resolve(false);
   }
 
@@ -137,7 +143,7 @@ export class RuleEngine {
     const rule = this.rules.get(ruleIndex);
 
     if (!rule) {
-      throw new Error(`Rule ${ruleIndex} not found`);
+      throw new Error(`Rule "${ruleIndex}" not found`);
     }
 
     let result;
