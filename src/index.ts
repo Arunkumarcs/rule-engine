@@ -1,8 +1,8 @@
 import _ from "lodash";
-import { RuleMap, RuleCondition, ConditionGroup } from "./types";
+import { RuleMap, RuleSet, RuleCondition, ConditionGroup } from "./types";
 
 export class RuleEngine {
-  private rules: Map<string, any> = new Map();
+  private rules: Map<string, RuleSet> = new Map();
   private operators: Map<string, (a: any, b: any) => Promise<boolean>> =
     new Map();
   private defaultOperators: {
@@ -65,8 +65,11 @@ export class RuleEngine {
 
   private initial(rules?: RuleMap) {
     if (rules) {
-      this.rules = new Map(Object.entries(rules));
+      this.rules = new Map<string, RuleSet>(
+        rules.map((rule) => [rule.name, rule])
+      );
     }
+
     this.defaultOperators.forEach((op) => this.operators.set(op.key, op.val));
   }
 
@@ -94,16 +97,19 @@ export class RuleEngine {
     };
   }
 
-  private async evaluateRule(fact: object, rule: any): Promise<boolean> {
-    if (rule.all) {
+  private async evaluateRule(
+    fact: object,
+    conditionGroup: ConditionGroup
+  ): Promise<boolean> {
+    if (conditionGroup.all) {
       return (
-        await Promise.all(rule.all.map(this.eventRuleCallback(fact)))
+        await Promise.all(conditionGroup.all.map(this.eventRuleCallback(fact)))
       ).every((result) => result);
     }
-    if (rule.any) {
+    if (conditionGroup.any) {
       return (
         await Promise.all(
-          rule.any.map(
+          conditionGroup.any.map(
             async (cond: any) => await this.evaluateCondition(fact, cond)
           )
         )
@@ -123,7 +129,7 @@ export class RuleEngine {
     return false;
   }
 
-  public async setRule(name: string, rule: object): Promise<boolean> {
+  public async setRule(name: string, rule: RuleSet): Promise<boolean> {
     if (!this.rules.has(name)) {
       this.rules.set(name, rule);
       return true;
@@ -132,33 +138,47 @@ export class RuleEngine {
   }
 
   private async memorizedEvaluateRule(
-    keyFunction?: (fact: object, conditions: ConditionGroup) => string
+    keyFunction?: (fact: object, conditions: ConditionGroup) => string | boolean
   ) {
-    return keyFunction
+    return typeof keyFunction === "function"
       ? _.memoize(this.evaluateRule, keyFunction)
       : _.memoize(this.evaluateRule);
   }
 
   public async runRule(fact: object, ruleIndex: string): Promise<any> {
-    const rule = this.rules.get(ruleIndex);
+    const rule = this.rules.get(ruleIndex) as RuleSet;
 
     if (!rule) {
       throw new Error(`Rule "${ruleIndex}" not found`);
     }
 
     let result;
-    if (rule.memorize) {
-      result = await(await this.memorizedEvaluateRule(rule.memorizeKey))(
-        fact,
-        rule.conditions
-      );
+    if (rule.memorizeKey) {
+      result = await (
+        await this.memorizedEvaluateRule(rule.memorizeKey)
+      )(fact, rule.conditions);
     } else {
       result = await this.evaluateRule(fact, rule.conditions);
     }
 
     if (result) {
-      return rule.onSuccess(fact);
+      if (typeof rule.onSuccess === "function") {
+        return rule.onSuccess(fact, {
+          name: rule.name,
+          conditions: rule.conditions,
+        });
+      } else {
+        return rule.onSuccess;
+      }
     }
-    return rule.onFail(fact);
+
+    if (typeof rule.onFail === "function") {
+      return rule.onFail(fact, {
+        name: rule.name,
+        conditions: rule.conditions,
+      });
+    } else {
+      return rule.onFail;
+    }
   }
 }
