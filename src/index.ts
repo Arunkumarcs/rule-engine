@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { RuleMap, RuleCondition } from "./types";
+import { RuleMap, RuleCondition, ConditionGroup } from "./types";
 
 export class RuleEngine {
   private rules: Map<string, any> = new Map();
@@ -58,12 +58,14 @@ export class RuleEngine {
     },
   ];
 
-  constructor(rules: RuleMap | {}) {
+  constructor(rules?: RuleMap) {
     this.initial(rules);
   }
 
-  private initial(rules: RuleMap) {
-    this.rules = new Map(Object.entries(rules));
+  private initial(rules?: RuleMap) {
+    if (rules) {
+      this.rules = new Map(Object.entries(rules));
+    }
     this.defaultOperators.forEach((op) => this.operators.set(op.key, op.val));
   }
 
@@ -123,9 +125,31 @@ export class RuleEngine {
     return false;
   }
 
+  private async memorizedEvaluateRule(
+    keyFunction?: (fact: object, conditions: ConditionGroup) => string
+  ) {
+    return keyFunction
+      ? _.memoize(this.evaluateRule, keyFunction)
+      : _.memoize(this.evaluateRule);
+  }
+
   public async runRule(fact: object, ruleIndex: string): Promise<any> {
     const rule = this.rules.get(ruleIndex);
-    const result = await this.evaluateRule(fact, rule.conditions);
+
+    if (!rule) {
+      throw new Error(`Rule ${ruleIndex} not found`);
+    }
+
+    let result;
+    if (rule.memorize) {
+      result = await(await this.memorizedEvaluateRule(rule.memorizeKey))(
+        fact,
+        rule.conditions
+      );
+    } else {
+      result = await this.evaluateRule(fact, rule.conditions);
+    }
+
     if (result) {
       return rule.onSuccess(fact);
     }

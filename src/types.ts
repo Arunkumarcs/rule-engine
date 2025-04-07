@@ -14,7 +14,7 @@ type Operator =
   | string;
 
 // Nested group of conditions (supports recursion)
-interface ConditionGroup {
+export interface ConditionGroup {
   all?: Rule[];
   any?: Rule[];
 }
@@ -27,6 +27,8 @@ interface RuleSet {
   conditions: ConditionGroup;
   onSuccess?: () => void;
   onFail?: () => void;
+  memorize?: boolean;
+  memorizeKey?: (fact: object, conditions: ConditionGroup) => string;
 }
 
 // Full rule engine definition
