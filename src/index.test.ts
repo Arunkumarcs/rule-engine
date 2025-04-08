@@ -191,6 +191,7 @@ describe("Engine: Direct flows", () => {
         },
         onSuccess: "Success",
         onFail: "Fail",
+        cache: false,
       },
     ] as RuleEngine.Rule[];
     const engine = new Engine();

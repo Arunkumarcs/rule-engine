@@ -1,5 +1,5 @@
-import _ from "lodash";
 import { RuleEngine } from "./types";
+import { get, memoize, includes, startsWith, endsWith, isArray } from "lodash";
 
 export class Engine {
   private namedRules: Map<string, RuleEngine.Rule> = new Map();
@@ -8,15 +8,15 @@ export class Engine {
     [
       {
         key: "%like%",
-        val: (a: string, b: string) => Promise.resolve(_.includes(a, b)),
+        val: (a: string, b: string) => Promise.resolve(includes(a, b)),
       },
       {
         key: "%like",
-        val: (a: string, b: string) => Promise.resolve(_.endsWith(a, b)),
+        val: (a: string, b: string) => Promise.resolve(endsWith(a, b)),
       },
       {
         key: "like%",
-        val: (a: string, b: string) => Promise.resolve(_.startsWith(a, b)),
+        val: (a: string, b: string) => Promise.resolve(startsWith(a, b)),
       },
       {
         key: "===",
@@ -52,29 +52,27 @@ export class Engine {
       },
       {
         key: "in",
-        val: (a: any[], b: any) =>
-          Promise.resolve(Array.isArray(b) && b.includes(a)),
+        val: (a: any[], b: any) => Promise.resolve(isArray(b) && b.includes(a)),
       },
       {
         key: "!in",
         val: (a: any[], b: any) =>
-          Promise.resolve(Array.isArray(b) && !b.includes(a)),
+          Promise.resolve(isArray(b) && !b.includes(a)),
       },
       {
         key: "includes",
-        val: (a: any, b: any[]) =>
-          Promise.resolve(Array.isArray(a) && a.includes(b)),
+        val: (a: any, b: any[]) => Promise.resolve(isArray(a) && a.includes(b)),
       },
       {
         key: "!includes",
         val: (a: any, b: any[]) =>
-          Promise.resolve(Array.isArray(a) && !a.includes(b)),
+          Promise.resolve(isArray(a) && !a.includes(b)),
       },
     ].map((data) => [data.key, data.val])
   );
 
   set rule(list: RuleEngine.Rule | RuleEngine.Rule[]) {
-    if (Array.isArray(list)) {
+    if (isArray(list)) {
       list.forEach((data) => {
         if (this.namedRules.has(data.name)) {
           throw new Error(`Rule ${data.name} already exists`);
@@ -90,7 +88,7 @@ export class Engine {
   }
 
   set condition(list: RuleEngine.NamedCondition | RuleEngine.NamedCondition[]) {
-    if (Array.isArray(list)) {
+    if (isArray(list)) {
       list.forEach((data) => {
         if (this.namedConditions.has(data.name)) {
           throw new Error(`Condition ${data.name} already exists`);
@@ -106,7 +104,7 @@ export class Engine {
   }
 
   set operator(list: RuleEngine.NamedOperator | RuleEngine.NamedOperator[]) {
-    if (Array.isArray(list)) {
+    if (isArray(list)) {
       list.forEach((data) => {
         if (this.namedOperators.has(data.name)) {
           throw new Error(`Operator ${data.name} already exists`);
@@ -122,8 +120,8 @@ export class Engine {
   }
 
   private async cachedRuleEvaluate(rule: RuleEngine.Rule) {
-    return !rule.cache || rule.cache === true
-      ? _.memoize(
+    return get(rule, "cache", true)
+      ? memoize(
           async (fact: object, condition: RuleEngine.Condition | string) => {
             // This is the actual function that will be memoized
             return this.evaluateRule(fact, condition);
@@ -138,14 +136,14 @@ export class Engine {
     fact: object,
     { path, operator, value }: RuleEngine.RuleCondition
   ): Promise<boolean> {
-    const actual = _.get(fact, path, false);
+    const actual = get(fact, path, false);
     const fn = this.namedOperators.get(operator);
 
     if (!fn) {
       throw new Error(`Operator "${operator}" not found`);
     }
 
-    return fn ? await fn(actual, value) : Promise.resolve(false);
+    return await fn(actual, value);
   }
 
   private async evaluateRuleCondition(
