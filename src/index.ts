@@ -2,9 +2,9 @@ import { RuleEngine } from "./types";
 import { get, memoize, includes, startsWith, endsWith, isArray } from "lodash";
 
 export class Engine {
-  private namedRules: Map<string, RuleEngine.Rule> = new Map();
-  private namedConditions: Map<string, RuleEngine.Condition> = new Map();
-  private namedOperators: Map<string, RuleEngine.OperatorCallback> = new Map(
+  protected namedRules: Map<string, RuleEngine.Rule> = new Map();
+  protected namedConditions: Map<string, RuleEngine.Condition> = new Map();
+  protected namedOperators: Map<string, RuleEngine.OperatorCallback> = new Map(
     [
       {
         key: "%like%",
@@ -52,21 +52,19 @@ export class Engine {
       },
       {
         key: "in",
-        val: (a: any[], b: any) => Promise.resolve(isArray(b) && b.includes(a)),
+        val: (a: any, b: any) => Promise.resolve(includes(b, a)),
       },
       {
         key: "!in",
-        val: (a: any[], b: any) =>
-          Promise.resolve(isArray(b) && !b.includes(a)),
+        val: (a: any, b: any) => Promise.resolve(!includes(b, a)),
       },
       {
         key: "includes",
-        val: (a: any, b: any[]) => Promise.resolve(isArray(a) && a.includes(b)),
+        val: (a: any, b: any) => Promise.resolve(includes(a, b)),
       },
       {
         key: "!includes",
-        val: (a: any, b: any[]) =>
-          Promise.resolve(isArray(a) && !a.includes(b)),
+        val: (a: any, b: any) => Promise.resolve(!includes(a, b)),
       },
     ].map((data) => [data.key, data.val])
   );
@@ -119,7 +117,7 @@ export class Engine {
     }
   }
 
-  private async evaluateCondition(
+  protected async evaluateCondition(
     fact: object,
     { path, operator, value }: RuleEngine.RuleCondition
   ): Promise<boolean> {
@@ -133,7 +131,7 @@ export class Engine {
     return await fn(actual, value);
   }
 
-  private async evaluateRuleCondition(
+  protected async evaluateRuleCondition(
     fact: object,
     cond: RuleEngine.ConditionType
   ) {
@@ -144,7 +142,7 @@ export class Engine {
     }
   }
 
-  private async evaluateRule(
+  protected async evaluateRule(
     fact: object,
     condition: RuleEngine.Condition | string
   ): Promise<any> {
@@ -181,7 +179,7 @@ export class Engine {
     }
   }
 
-  private async cachedRuleEvaluate(rule: RuleEngine.Rule) {
+  protected async cachedRuleEvaluate(rule: RuleEngine.Rule) {
     return get(rule, "cache", true)
       ? memoize(
           async (fact: object, condition: RuleEngine.Condition | string) => {
