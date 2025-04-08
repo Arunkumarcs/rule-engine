@@ -119,19 +119,6 @@ export class Engine {
     }
   }
 
-  private async cachedRuleEvaluate(rule: RuleEngine.Rule) {
-    return get(rule, "cache", true)
-      ? memoize(
-          async (fact: object, condition: RuleEngine.Condition | string) => {
-            // This is the actual function that will be memoized
-            return this.evaluateRule(fact, condition);
-          },
-          (fact: object, condition: RuleEngine.Condition | string) =>
-            `${rule.name}-${JSON.stringify(fact)}`
-        )
-      : async (fact: object) => this.evaluateRule(fact, rule.condition);
-  }
-
   private async evaluateCondition(
     fact: object,
     { path, operator, value }: RuleEngine.RuleCondition
@@ -192,6 +179,19 @@ export class Engine {
         )
       ).some((result) => result);
     }
+  }
+
+  private async cachedRuleEvaluate(rule: RuleEngine.Rule) {
+    return get(rule, "cache", true)
+      ? memoize(
+          async (fact: object, condition: RuleEngine.Condition | string) => {
+            // This is the actual function that will be memoized
+            return this.evaluateRule(fact, condition);
+          },
+          (fact: object, condition: RuleEngine.Condition | string) =>
+            `${rule.name}-${JSON.stringify(fact)}`
+        )
+      : async (fact: object) => this.evaluateRule(fact, rule.condition);
   }
 
   public async run(fact: object, ruleName: string) {
