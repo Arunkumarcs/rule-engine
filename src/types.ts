@@ -1,68 +1,83 @@
-// Primitive operators
-type Operator =
-  | "==="
-  | "!=="
-  | ">"
-  | ">="
-  | "<"
-  | "<="
-  | "=="
-  | "!="
-  | "like%"
-  | "%like"
-  | "%like%"
-  | string;
+export namespace RuleEngine {
+  type Operator =
+    | "==="
+    | "!=="
+    | ">"
+    | ">="
+    | "<"
+    | "<="
+    | "=="
+    | "!="
+    | "like%"
+    | "%like"
+    | "%like%"
+    | "in"
+    | "!in"
+    | "includes"
+    | "!includes"
+    | string;
 
-// Nested group of conditions (supports recursion)
-export interface ConditionGroup {
-  all?: Rule[];
-  any?: Rule[];
-}
+  type RuleCallbackMeta = {
+    name: string;
+    condition: Condition | string;
+  };
+  type RuleCallback =
+    | string
+    | number
+    | boolean
+    | object
+    | string[]
+    | number[]
+    | boolean[]
+    | object[]
+    | ((
+        fact: object,
+        rule: RuleCallbackMeta
+      ) =>
+        | string
+        | number
+        | boolean
+        | object
+        | string[]
+        | number[]
+        | boolean[]
+        | object[]);
 
-// A rule is either a condition or a group of conditions
-type Rule = RuleCondition | ConditionGroup;
+  export interface RuleCondition {
+    path: string;
+    operator: Operator;
+    value: any;
+  }
 
-type RuleCallback =
-  | string
-  | number
-  | boolean
-  | object
-  | string[]
-  | number[]
-  | boolean[]
-  | object[]
-  | ((
-      fact: object,
-      rule: {
-        name: string;
-        conditions: ConditionGroup;
-      }
-    ) =>
-      | string
-      | number
-      | boolean
-      | object
-      | string[]
-      | number[]
-      | boolean[]
-      | object[]);
+  export type ConditionType = RuleCondition | Condition | string;
 
-// Full rule engine definition
-export interface RuleSet {
-  name: string;
-  conditions: ConditionGroup;
-  onSuccess?: RuleCallback;
-  onFail?: RuleCallback;
-  memorizeKey?: (fact: object, conditions: ConditionGroup) => string | boolean;
-}
+  export type ConditionAnd = {
+    and: ConditionType[];
+  };
 
-// Full rule engine definition
-export type RuleMap = RuleSet[];
+  export type ConditionOr = {
+    or: ConditionType[];
+  };
 
+  export type Condition = ConditionAnd | ConditionOr;
 
-// Basic condition
-export interface RuleCondition {
-  path: string;
-  operator: Operator;
-  value: any;
+  export type NamedCondition = {
+    name: string;
+    condition: Condition;
+  };
+
+  export type OperatorCallback = (a: any, b: any) => Promise<boolean>;
+
+  export type NamedOperator = {
+    name: string;
+    operator: OperatorCallback;
+  };
+
+  export type Rule = {
+    name: string;
+    condition: Condition | string;
+    onSuccess: RuleCallback;
+    onFail: RuleCallback;
+    cache?: boolean;
+  };
 }

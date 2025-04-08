@@ -3,18 +3,18 @@
   "version": "2.0.0",
   "license": "MIT",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/types.d.ts",
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Arunkumarcs/-arunkumar_h-rule-engine.git"
+    "url": "git+https://github.com/Arunkumarcs/rule-engine.git"
   },
   "bugs": {
-    "url": "https://github.com/Arunkumarcs/-arunkumar_h-rule-engine/issues"
+    "url": "https://github.com/Arunkumarcs/rule-engine/issues"
   },
-  "homepage": "https://github.com/Arunkumarcs/-arunkumar_h-rule-engine/tree/main#readme",
+  "homepage": "https://github.com/Arunkumarcs/rule-engine/tree/main#readme",
   "publishConfig": {
     "access": "public"
   },

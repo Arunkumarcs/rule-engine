@@ -1,84 +1,145 @@
 import _ from "lodash";
-import { RuleMap, RuleSet, RuleCondition, ConditionGroup } from "./types";
+import { RuleEngine } from "./types";
 
-export class RuleEngine {
-  private rules: Map<string, RuleSet> = new Map();
-  private operators: Map<string, (a: any, b: any) => Promise<boolean>> =
-    new Map();
-  private defaultOperators: {
-    key: string;
-    val: (a: any, b: any) => Promise<boolean>;
-  }[] = [
-    {
-      key: "%like%",
-      val: (a, b) => Promise.resolve(_.includes(a, b)),
-    },
-    {
-      key: "%like",
-      val: (a, b) => Promise.resolve(_.endsWith(a, b)),
-    },
-    {
-      key: "like%",
-      val: (a, b) => Promise.resolve(_.startsWith(a, b)),
-    },
-    {
-      key: "===",
-      val: (a, b) => Promise.resolve(a === b),
-    },
-    {
-      key: "==",
-      val: (a, b) => Promise.resolve(a == b),
-    },
-    {
-      key: "!==",
-      val: (a, b) => Promise.resolve(a !== b),
-    },
-    {
-      key: "!=",
-      val: (a, b) => Promise.resolve(a != b),
-    },
-    {
-      key: ">",
-      val: (a, b) => Promise.resolve(a > b),
-    },
-    {
-      key: ">=",
-      val: (a, b) => Promise.resolve(a >= b),
-    },
-    {
-      key: "<",
-      val: (a, b) => Promise.resolve(a < b),
-    },
-    {
-      key: "<=",
-      val: (a, b) => Promise.resolve(a <= b),
-    },
-    {
-      key: "in",
-      val: (a, b) => Promise.resolve(Array.isArray(a) && a.includes(b)),
-    },
-  ];
+export class Engine {
+  private namedRules: Map<string, RuleEngine.Rule> = new Map();
+  private namedConditions: Map<string, RuleEngine.Condition> = new Map();
+  private namedOperators: Map<string, RuleEngine.OperatorCallback> = new Map(
+    [
+      {
+        key: "%like%",
+        val: (a: string, b: string) => Promise.resolve(_.includes(a, b)),
+      },
+      {
+        key: "%like",
+        val: (a: string, b: string) => Promise.resolve(_.endsWith(a, b)),
+      },
+      {
+        key: "like%",
+        val: (a: string, b: string) => Promise.resolve(_.startsWith(a, b)),
+      },
+      {
+        key: "===",
+        val: (a: any, b: any) => Promise.resolve(a === b),
+      },
+      {
+        key: "==",
+        val: (a: any, b: any) => Promise.resolve(a == b),
+      },
+      {
+        key: "!==",
+        val: (a: any, b: any) => Promise.resolve(a !== b),
+      },
+      {
+        key: "!=",
+        val: (a: any, b: any) => Promise.resolve(a != b),
+      },
+      {
+        key: ">",
+        val: (a: any, b: any) => Promise.resolve(a > b),
+      },
+      {
+        key: ">=",
+        val: (a: any, b: any) => Promise.resolve(a >= b),
+      },
+      {
+        key: "<",
+        val: (a: any, b: any) => Promise.resolve(a < b),
+      },
+      {
+        key: "<=",
+        val: (a: any, b: any) => Promise.resolve(a <= b),
+      },
+      {
+        key: "in",
+        val: (a: any[], b: any) =>
+          Promise.resolve(Array.isArray(b) && b.includes(a)),
+      },
+      {
+        key: "!in",
+        val: (a: any[], b: any) =>
+          Promise.resolve(Array.isArray(b) && !b.includes(a)),
+      },
+      {
+        key: "includes",
+        val: (a: any, b: any[]) =>
+          Promise.resolve(Array.isArray(a) && a.includes(b)),
+      },
+      {
+        key: "!includes",
+        val: (a: any, b: any[]) =>
+          Promise.resolve(Array.isArray(a) && !a.includes(b)),
+      },
+    ].map((data) => [data.key, data.val])
+  );
 
-  constructor(rules?: RuleMap) {
-    this.initial(rules);
+  set rule(list: RuleEngine.Rule | RuleEngine.Rule[]) {
+    if (Array.isArray(list)) {
+      list.forEach((data) => {
+        if (this.namedRules.has(data.name)) {
+          throw new Error(`Rule ${data.name} already exists`);
+        }
+        return this.namedRules.set(data.name, data);
+      });
+    } else {
+      if (this.namedRules.has(list.name)) {
+        throw new Error(`Rule ${list.name} already exists`);
+      }
+      this.namedRules.set(list.name, list);
+    }
   }
 
-  private initial(rules?: RuleMap) {
-    if (rules) {
-      this.rules = new Map<string, RuleSet>(
-        rules.map((rule) => [rule.name, rule])
-      );
+  set condition(list: RuleEngine.NamedCondition | RuleEngine.NamedCondition[]) {
+    if (Array.isArray(list)) {
+      list.forEach((data) => {
+        if (this.namedConditions.has(data.name)) {
+          throw new Error(`Condition ${data.name} already exists`);
+        }
+        return this.namedConditions.set(data.name, data.condition);
+      });
+    } else {
+      if (this.namedConditions.has(list.name)) {
+        throw new Error(`Condition ${list.name} already exists`);
+      }
+      this.namedConditions.set(list.name, list.condition);
     }
+  }
 
-    this.defaultOperators.forEach((op) => this.operators.set(op.key, op.val));
+  set operator(list: RuleEngine.NamedOperator | RuleEngine.NamedOperator[]) {
+    if (Array.isArray(list)) {
+      list.forEach((data) => {
+        if (this.namedOperators.has(data.name)) {
+          throw new Error(`Operator ${data.name} already exists`);
+        }
+        return this.namedOperators.set(data.name, data.operator);
+      });
+    } else {
+      if (this.namedOperators.has(list.name)) {
+        throw new Error(`Operator ${list.name} already exists`);
+      }
+      this.namedOperators.set(list.name, list.operator);
+    }
+  }
+
+  private async cachedRuleEvaluate(rule: RuleEngine.Rule) {
+    return !rule.cache || rule.cache === true
+      ? _.memoize(
+          async (fact: object, condition: RuleEngine.Condition | string) => {
+            // This is the actual function that will be memoized
+            return this.evaluateRule(fact, condition);
+          },
+          (fact: object, condition: RuleEngine.Condition | string) =>
+            `${rule.name}-${JSON.stringify(fact)}`
+        )
+      : async (fact: object) => this.evaluateRule(fact, rule.condition);
   }
 
   private async evaluateCondition(
     fact: object,
-    { path, operator, value }: RuleCondition
+    { path, operator, value }: RuleEngine.RuleCondition
   ): Promise<boolean> {
     const actual = _.get(fact, path, false);
-    const fn = this.operators.get(operator);
+    const fn = this.namedOperators.get(operator);
 
     if (!fn) {
       throw new Error(`Operator "${operator}" not found`);
@@ -87,85 +148,70 @@ export class RuleEngine {
     return fn ? await fn(actual, value) : Promise.resolve(false);
   }
 
-  private eventRuleCallback(fact: object) {
-    return async (cond: any) => {
-      if (cond.all || cond.any) {
-        return this.evaluateRule(fact, cond);
-      } else {
-        return this.evaluateCondition(fact, cond);
-      }
-    };
+  private async evaluateRuleCondition(
+    fact: object,
+    cond: RuleEngine.ConditionType
+  ) {
+    if (typeof cond === "string" || "and" in cond || "or" in cond) {
+      return await this.evaluateRule(fact, cond);
+    } else if ("operator" in cond) {
+      return await this.evaluateCondition(fact, cond);
+    }
   }
 
   private async evaluateRule(
     fact: object,
-    conditionGroup: ConditionGroup
-  ): Promise<boolean> {
-    if (conditionGroup.all) {
-      return (
-        await Promise.all(conditionGroup.all.map(this.eventRuleCallback(fact)))
-      ).every((result) => result);
+    condition: RuleEngine.Condition | string
+  ): Promise<any> {
+    let namedCondition: RuleEngine.Condition | undefined;
+    if (typeof condition === "string") {
+      namedCondition = this.namedConditions.get(condition);
+    } else {
+      namedCondition = condition;
     }
-    if (conditionGroup.any) {
+
+    if (!namedCondition) {
+      throw new Error(`Condition "${condition}" not found`);
+    }
+
+    if ("and" in namedCondition) {
       return (
         await Promise.all(
-          conditionGroup.any.map(
-            async (cond: any) => await this.evaluateCondition(fact, cond)
+          namedCondition.and.map(
+            async (cond: RuleEngine.ConditionType) =>
+              await this.evaluateRuleCondition(fact, cond)
+          )
+        )
+      ).every((result) => result);
+    }
+    if ("or" in namedCondition) {
+      return (
+        await Promise.all(
+          namedCondition.or.map(
+            async (cond: RuleEngine.ConditionType) =>
+              await this.evaluateRuleCondition(fact, cond)
           )
         )
       ).some((result) => result);
     }
-    return false;
   }
 
-  public async setOperator(
-    symbol: string,
-    callback: (a: any, b: any) => Promise<boolean>
-  ): Promise<boolean> {
-    if (!this.operators.has(symbol)) {
-      this.operators.set(symbol, callback);
-      return true;
-    }
-    return false;
-  }
-
-  public async setRule(name: string, rule: RuleSet): Promise<boolean> {
-    if (!this.rules.has(name)) {
-      this.rules.set(name, rule);
-      return true;
-    }
-    return false;
-  }
-
-  private async memorizedEvaluateRule(
-    keyFunction?: (fact: object, conditions: ConditionGroup) => string | boolean
-  ) {
-    return typeof keyFunction === "function"
-      ? _.memoize(this.evaluateRule, keyFunction)
-      : _.memoize(this.evaluateRule);
-  }
-
-  public async runRule(fact: object, ruleIndex: string): Promise<any> {
-    const rule = this.rules.get(ruleIndex) as RuleSet;
+  public async run(fact: object, ruleName: string) {
+    const rule = this.namedRules.get(ruleName) as RuleEngine.Rule;
 
     if (!rule) {
-      throw new Error(`Rule "${ruleIndex}" not found`);
+      throw new Error(`Rule "${ruleName}" not found`);
     }
 
-    let result;
-    if (rule.memorizeKey) {
-      result = await (
-        await this.memorizedEvaluateRule(rule.memorizeKey)
-      )(fact, rule.conditions);
-    } else {
-      result = await this.evaluateRule(fact, rule.conditions);
-    }
+    const result = await (
+      await this.cachedRuleEvaluate(rule)
+    )(fact, rule.condition);
 
     if (result) {
       if (typeof rule.onSuccess === "function") {
         return rule.onSuccess(fact, {
           name: rule.name,
-          conditions: rule.conditions,
+          condition: rule.condition,
         });
       } else {
         return rule.onSuccess;
@@ -175,7 +221,7 @@ export class RuleEngine {
     if (typeof rule.onFail === "function") {
       return rule.onFail(fact, {
         name: rule.name,
-        conditions: rule.conditions,
+        condition: rule.condition,
       });
     } else {
       return rule.onFail;
