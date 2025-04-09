@@ -39,7 +39,9 @@ export namespace RuleEngine {
     value: any;
   }
 
-  export type ConditionType = RuleCondition | Condition | string;
+  export type ConditionName = string;
+
+  export type ConditionType = RuleCondition | Condition | ConditionName;
 
   export type ConditionAnd = {
     and: ConditionType[];
@@ -52,7 +54,7 @@ export namespace RuleEngine {
   export type Condition = ConditionAnd | ConditionOr;
 
   export type NamedCondition = {
-    name: string;
+    name: ConditionName;
     condition: Condition;
   };
 
@@ -65,7 +67,7 @@ export namespace RuleEngine {
 
   export type Rule = {
     name: string;
-    condition: Condition | string;
+    condition: Condition | ConditionName;
     onSuccess: RuleCallback;
     onFail: RuleCallback;
     // TODO: Provision for custom cache key

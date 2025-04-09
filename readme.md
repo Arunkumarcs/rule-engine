@@ -1,141 +1,113 @@
 # Rule Engine
-
 A simple rule engine for evaluating conditions and executing actions based on predefined rules.
+Rules can be a JSON data or dynamic data from Database.
 
+## Blocks of rule engine
+:::mermaid
+flowchart LR
+    Rule --> Condition --> Operator
+:::
 
-# Inspired from [json-rules-engine](https://www.npmjs.com/package/json-rules-engine?activeTab=readme)
-### A simple rules engine for evaluating conditions and executing actions based on predefined rules.
+## Default Operators
+The following operators are available by default:
 
-
-## Installation
-
-```bash
-npm install @arunkumar_h/rule-engine
-```
-
-## Usage
-
-```javascript
-const RuleEngine = require('@arunkumar_h/rule-engine');
-const rules = {
-  // Define your rules here
-};
-const fact = {
-  // Define your fact here
-};
-
-let r = new RuleEngine(rules);
-r.runRule(fact, "ruleName"); // Replace "ruleName" with the actual rule name
-```
+* `===`: Strict equality check
+* `!==`: Strict inequality check
+* `>`: Greater than
+* `>=`: Greater than or equal to
+* `<`: Less than
+* `<=`: Less than or equal to
+* `==`: Loose equality check
+* `!=`: Loose inequality check
+* `like%`: Ends with
+* `%like`: Starts with
+* `%like%`: Includes
+* `in`: Value is in the given array
+* `!in`: Value is not in the given array
+* `includes`: Value includes the given value
+* `!includes`: Value does not include the given value
 
 ## API
+#### `let engine = new Engine()`
+Creates a new instance of the RuleEngine.
 
-### `new RuleEngine(rules)`
+#### `engine.addRule(namedRule)` or `engine.addRule([namedRule[0], namedRule[1]....])`
+Provision to add named rules to engine dynamically.
 
-Creates a new instance of the RuleEngine with the provided rules.
+#### `engine.addCondition(nammedCondition)` or `engine.addCondition([nammedCondition[0], nammedCondition[1]....])`
+Provision to add new condition to engine dynamically.
+Condition can invoke another namedCondition.
 
-### `setRule(name, rule)`
+#### `engine.addOperator(nammedOperator)` or `engine.addOperator([nammedOperator[0], nammedOperator[1]....])`
+Provision to add new operator to engine dynamically.
+Operator can also be an async function.
 
-Add  new rule.
+## Adding Rule
 
-### `runRule(fact, ruleIndex)`
-
-Evaluates the rule specified by `ruleIndex` against the provided `fact`.
-
-### `setOperator(symbol, callback)`
-
-Add new custom operator for the rule engine.
-
-## Example Rules
-
-```javascript
-const rules = {
-  level1: {
-    conditions: {
-      all: [
-        { path: "user.age", operator: ">=", value: 18 },
-        { path: "user.country", operator: "===", value: "US" },
-        {
-          all: [
-            { path: "user.age", operator: "<=", value: 21 },
-            { path: "name", operator: "==", value: "dd" },
-          ],
-        },
-      ],
-    },
-    onSuccess: () => console.log("🇺🇸 US adult SCUCCESS"),
-    onFail: () => console.log("🇺🇸 US adult FAILES"),
-  },
-  level2: {
-    conditions: {
-      any: [
-        { path: "user.role", operator: "==", value: "admin" },
-        { path: "user.accessLevel", operator: ">=", value: 5 },
-      ],
-    },
-    onSuccess: () => console.log("🔓 Elevated access SCUCCESS"),
-    onFail: () => console.log("🔓 Elevated access FAILES"),
-  },
-};
-```
-
-## Example Fact
+- `name` identifies the name of the rule. The name should always be unique. A single engine cannot have the same rule added more than once.
+- `condition` This containes `and` and `or` as main block. 
+- `onSuccess` value that will be returned or function that will be invoked if the condition is satisfied.
+- `onFail` value that will be returned or function that will be invoked if the condition fails.
 
 ```javascript
-const fact = {
-  user: {
-    age: 21,
-    country: "US",
-    role: "editor",
-    accessLevel: 6,
-  },
-  name: "d",
-};
-```
+import { Engine } from "@arunkumar_h/rule-engine";
 
-## Running the Rule Engine
-
-```javascript
-let r = new RuleEngine(rules);
-r.runRule(fact, "level1"); // Evaluates the rule "level1" against the fact
-r.setRule("level3", {
-  conditions: {
-    all: [
-      { path: "user.age", operator: ">=", value: 18 },
-      { path: "user.country", operator: "===", value: "US" },
+const engineObj = new Engine();
+const rule = {
+  name: "testRule",
+  condition: {
+    and: [
+      { path: "age", operator: "!==", value: 10 },
       {
-        all: [
-          { path: "user.age", operator: "<=", value: 21 },
-          { path: "name", operator: "==", value: "d" },
+        and: [
+          { path: "age", operator: ">", value: 15 },
+          {
+            or: [
+              { path: "age", operator: "!==", value: 30 },
+              { path: "skills", operator: "includes", value: "ts" },
+            ],
+          },
         ],
       },
+      { path: "language", operator: "in", value: ["tamil", "english"] },
     ],
   },
-  onSuccess: async (fact) => console.log("🇺🇸 US adult2 SCUCCESS"),
-  onFail: async (fact) => console.log("🇺🇸 US adult2 FAILES"),
-});
-r.runRule(fact, "level3"); // Evaluates the new rule "level3" against the fact
+  onSuccess: () => "Success", // onSuccess: { id: 23 }
+  onFail: () => "Fail", // onFail: "Error"
+  cache: false
+};
+engine.addRule(rule);
 ```
 
-## Adding Custom Operator
-
-You can add a custom operator to the rule engine using the `setOperator` method. Here's an example:
 
 ```javascript
-r.setOperator("eq", async (a, b) => a === b);
+import { Engine } from "@arunkumar_h/rule-engine";
+const engineObj = new Engine();
+const condition1 = {
+  name: 'condition1',
+  condition: {
+    and: [
+      { path: "age", operator: "!==", value: 10 },
+      {
+        and: [
+          { path: "age", operator: ">", value: 15 },
+          {
+            or: [
+              { path: "age", operator: "!==", value: 30 },
+              { path: "skills", operator: "includes", value: "ts" },
+            ],
+          },
+        ],
+      },
+      { path: "language", operator: "in", value: ["tamil", "english"] },
+    ],
+  }}
+const rule = {
+  name: "testRule",
+  condition: "condition1",
+  onSuccess: () => "Success",
+  onFail: () => "Fail",
+};
+engine.addRule(rule);
+engine.addCondition(condition1);
 ```
-
-This will add a new operator `eq` to the rule engine, which checks for strict equality.
-
-
-## Testing
-
-The rule engine includes unit tests to ensure its functionality. You can run the tests using the following command:
-
-```bash
-npm test
-```
-
-## License
-
-The rule engine is licensed under the MIT License.

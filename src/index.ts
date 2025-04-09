@@ -8,68 +8,72 @@ export class Engine {
     [
       {
         key: "%like%",
-        val: (a: string, b: string) => Promise.resolve(includes(a, b)),
+        val: async (a: string, b: string) => Promise.resolve(includes(a, b)),
       },
       {
         key: "%like",
-        val: (a: string, b: string) => Promise.resolve(endsWith(a, b)),
+        val: async (a: string, b: string) => Promise.resolve(endsWith(a, b)),
       },
       {
         key: "like%",
-        val: (a: string, b: string) => Promise.resolve(startsWith(a, b)),
+        val: async (a: string, b: string) => Promise.resolve(startsWith(a, b)),
       },
       {
         key: "===",
-        val: (a: any, b: any) => Promise.resolve(a === b),
+        val: async (a: any, b: any) => Promise.resolve(a === b),
       },
       {
         key: "==",
-        val: (a: any, b: any) => Promise.resolve(a == b),
+        val: async (a: any, b: any) => Promise.resolve(a == b),
       },
       {
         key: "!==",
-        val: (a: any, b: any) => Promise.resolve(a !== b),
+        val: async (a: any, b: any) => Promise.resolve(a !== b),
       },
       {
         key: "!=",
-        val: (a: any, b: any) => Promise.resolve(a != b),
+        val: async (a: any, b: any) => Promise.resolve(a != b),
       },
       {
         key: ">",
-        val: (a: any, b: any) => Promise.resolve(a > b),
+        val: async (a: any, b: any) => Promise.resolve(a > b),
       },
       {
         key: ">=",
-        val: (a: any, b: any) => Promise.resolve(a >= b),
+        val: async (a: any, b: any) => Promise.resolve(a >= b),
       },
       {
         key: "<",
-        val: (a: any, b: any) => Promise.resolve(a < b),
+        val: async (a: any, b: any) => Promise.resolve(a < b),
       },
       {
         key: "<=",
-        val: (a: any, b: any) => Promise.resolve(a <= b),
+        val: async (a: any, b: any) => Promise.resolve(a <= b),
       },
       {
         key: "in",
-        val: (a: any, b: any) => Promise.resolve(includes(b, a)),
+        val: async (a: any, b: any) => Promise.resolve(includes(b, a)),
       },
       {
         key: "!in",
-        val: (a: any, b: any) => Promise.resolve(!includes(b, a)),
+        val: async (a: any, b: any) => Promise.resolve(!includes(b, a)),
       },
       {
         key: "includes",
-        val: (a: any, b: any) => Promise.resolve(includes(a, b)),
+        val: async (a: any, b: any) => Promise.resolve(includes(a, b)),
       },
       {
         key: "!includes",
-        val: (a: any, b: any) => Promise.resolve(!includes(a, b)),
+        val: async (a: any, b: any) => Promise.resolve(!includes(a, b)),
       },
     ].map((data) => [data.key, data.val])
   );
 
-  set rule(list: RuleEngine.Rule | RuleEngine.Rule[]) {
+  get rule() {
+    return Object.fromEntries(this.namedRules);
+  }
+
+  addRule(list: RuleEngine.Rule | RuleEngine.Rule[]) {
     if (isArray(list)) {
       list.forEach((data) => {
         if (this.namedRules.has(data.name)) {
@@ -85,7 +89,11 @@ export class Engine {
     }
   }
 
-  set condition(list: RuleEngine.NamedCondition | RuleEngine.NamedCondition[]) {
+  get conditions() {
+    return Object.fromEntries(this.namedConditions);
+  }
+
+  addCondition(list: RuleEngine.NamedCondition | RuleEngine.NamedCondition[]) {
     if (isArray(list)) {
       list.forEach((data) => {
         if (this.namedConditions.has(data.name)) {
@@ -101,7 +109,11 @@ export class Engine {
     }
   }
 
-  set operator(list: RuleEngine.NamedOperator | RuleEngine.NamedOperator[]) {
+  get operators() {
+    return Object.fromEntries(this.namedOperators);
+  }
+
+  addOperator(list: RuleEngine.NamedOperator | RuleEngine.NamedOperator[]) {
     if (isArray(list)) {
       list.forEach((data) => {
         if (this.namedOperators.has(data.name)) {
@@ -128,7 +140,7 @@ export class Engine {
       throw new Error(`Operator "${operator}" not found`);
     }
 
-    return await fn(actual, value);
+    return fn(actual, value);
   }
 
   protected async evaluateRuleCondition(
@@ -136,9 +148,9 @@ export class Engine {
     cond: RuleEngine.ConditionType
   ) {
     if (typeof cond === "string" || "and" in cond || "or" in cond) {
-      return await this.evaluateRule(fact, cond);
+      return this.evaluateRule(fact, cond);
     } else if ("operator" in cond) {
-      return await this.evaluateCondition(fact, cond);
+      return this.evaluateCondition(fact, cond);
     }
   }
 
@@ -160,9 +172,8 @@ export class Engine {
     if ("and" in namedCondition) {
       return (
         await Promise.all(
-          namedCondition.and.map(
-            async (cond: RuleEngine.ConditionType) =>
-              await this.evaluateRuleCondition(fact, cond)
+          namedCondition.and.map(async (cond: RuleEngine.ConditionType) =>
+            this.evaluateRuleCondition(fact, cond)
           )
         )
       ).every((result) => result);
@@ -170,9 +181,8 @@ export class Engine {
     if ("or" in namedCondition) {
       return (
         await Promise.all(
-          namedCondition.or.map(
-            async (cond: RuleEngine.ConditionType) =>
-              await this.evaluateRuleCondition(fact, cond)
+          namedCondition.or.map(async (cond: RuleEngine.ConditionType) =>
+            this.evaluateRuleCondition(fact, cond)
           )
         )
       ).some((result) => result);

@@ -49,7 +49,7 @@ describe("Engine: Direct flows", () => {
       },
     ] as RuleEngine.Rule[];
     const engine = new Engine();
-    engine.rule = rule;
+    engine.addRule(rule);
 
     expect(await engine.run(fact, "testRule")).toBe("Success");
     expect(await engine.run(fact, "testRule2")).toBe("Success");
@@ -91,7 +91,7 @@ describe("Engine: Direct flows", () => {
       },
     ] as RuleEngine.Rule[];
     const engine = new Engine();
-    engine.rule = rule;
+    engine.addRule(rule);
 
     expect(await engine.run(fact, "testRule")).toBe("Success");
     expect(await engine.run(fact, "testRule2")).toBe("Success");
@@ -133,7 +133,7 @@ describe("Engine: Direct flows", () => {
       },
     ] as RuleEngine.Rule[];
     const engine = new Engine();
-    engine.rule = rule;
+    engine.addRule(rule);
 
     expect(await engine.run(fact, "testRule")).toBe("Fail");
     expect(await engine.run(fact, "testRule2")).toBe("Fail");
@@ -195,10 +195,172 @@ describe("Engine: Direct flows", () => {
       },
     ] as RuleEngine.Rule[];
     const engine = new Engine();
-    engine.rule = rule;
+    engine.addRule(rule);
 
     expect(await engine.run(fact, "testRule")).toBe("Success");
     expect(await engine.run(fact, "testRule2")).toBe("Success");
+  });
+});
+
+describe("Engine: Named Properties", () => {
+  it("should not add an already existing named rule in collection", async () => {
+    const engine = new Engine();
+    const rule = [
+      {
+        name: "existingRule",
+        condition: {
+          and: [
+            { path: "age", operator: ">", value: 18 },
+            { path: "age", operator: "<", value: 30 },
+          ],
+        },
+        onSuccess: () => "Success",
+        onFail: () => "Fail",
+      },
+      {
+        name: "genericrule",
+        condition: {
+          and: [{ path: "age", operator: "===", value: 18 }],
+        },
+        onSuccess: () => "Success",
+        onFail: () => "Fail",
+      },
+    ];
+    engine.addRule(rule);
+
+    let newRule = [
+      rule[0],
+      {
+        name: "genericrule2",
+        condition: {
+          and: [{ path: "name", operator: "===", value: "arun" }],
+        },
+        onSuccess: () => "Success",
+        onFail: () => "Fail",
+      },
+    ];
+    expect(() => engine.addRule(newRule)).toThrowError(
+      "Rule existingRule already exists"
+    );
+  });
+  it("should add an already existing named rule", async () => {
+    const engine = new Engine();
+    const rule = {
+      name: "existingRule",
+      condition: {
+        and: [
+          { path: "age", operator: ">", value: 18 },
+          { path: "age", operator: "<", value: 30 },
+        ],
+      },
+      onSuccess: () => "Success",
+      onFail: () => "Fail",
+    };
+    engine.addRule(rule);
+
+    expect(() => engine.addRule(rule)).toThrowError(
+      "Rule existingRule already exists"
+    );
+  });
+});
+
+describe("Engine: Getters", () => {
+  it("should return all conditions", () => {
+    const engine = new Engine();
+    engine.addCondition([
+      {
+        name: "testCondition",
+        condition: {
+          and: [
+            { path: "age", operator: "!==", value: 10 },
+            { path: "age", operator: "!=", value: 11 },
+            { path: "age", operator: "===", value: 30 },
+            { path: "employee.experience", operator: ">=", value: 10 },
+            { path: "age", operator: ">", value: 15 },
+            { path: "age", operator: "<", value: 40 },
+            { path: "age", operator: "<=", value: 30 },
+            { path: "age", operator: "==", value: 30 },
+            { path: "skills", operator: "includes", value: "ts" },
+            { path: "skills", operator: "!includes", value: "python" },
+            { path: "language", operator: "in", value: ["tamil", "english"] },
+            { path: "language", operator: "!in", value: ["french", "english"] },
+          ],
+        },
+      },
+    ]);
+
+    expect(engine.conditions).toEqual({
+      testCondition: {
+        and: [
+          { path: "age", operator: "!==", value: 10 },
+          { path: "age", operator: "!=", value: 11 },
+          { path: "age", operator: "===", value: 30 },
+          { path: "employee.experience", operator: ">=", value: 10 },
+          { path: "age", operator: ">", value: 15 },
+          { path: "age", operator: "<", value: 40 },
+          { path: "age", operator: "<=", value: 30 },
+          { path: "age", operator: "==", value: 30 },
+          { path: "skills", operator: "includes", value: "ts" },
+          { path: "skills", operator: "!includes", value: "python" },
+          { path: "language", operator: "in", value: ["tamil", "english"] },
+          { path: "language", operator: "!in", value: ["french", "english"] },
+        ],
+      },
+    });
+  });
+
+  it("should return all operators", () => {
+    const engine = new Engine();
+    expect(engine.operators).toEqual({
+      "%like%": expect.any(Function),
+      "%like": expect.any(Function),
+      "like%": expect.any(Function),
+      "===": expect.any(Function),
+      "==": expect.any(Function),
+      "!==": expect.any(Function),
+      "!=": expect.any(Function),
+      ">": expect.any(Function),
+      ">=": expect.any(Function),
+      "<": expect.any(Function),
+      "<=": expect.any(Function),
+      in: expect.any(Function),
+      "!in": expect.any(Function),
+      includes: expect.any(Function),
+      "!includes": expect.any(Function),
+    });
+  });
+
+  it("should return all rules", () => {
+    const engine = new Engine();
+    engine.addRule([
+      {
+        name: "testRule",
+        condition: "named",
+        onSuccess: () => "Success",
+        onFail: () => "Fail",
+      },
+      {
+        name: "testRule2",
+        condition: "2ndCondition",
+        onSuccess: () => "Success",
+        onFail: () => "Fail",
+      },
+    ]);
+
+    expect(engine.rule).toEqual({
+      testRule: {
+        name: "testRule",
+        condition: "named",
+        onSuccess: expect.any(Function),
+        onFail: expect.any(Function),
+      },
+      testRule2: {
+        name: "testRule2",
+        condition: "2ndCondition",
+        onSuccess: expect.any(Function),
+        onFail: expect.any(Function),
+      },
+    });
   });
 });
 
@@ -233,14 +395,14 @@ describe("Engine: Exceptions", () => {
       },
     };
     const engine = new Engine();
-    engine.rule = [
+    engine.addRule([
       {
         name: "testRule",
         condition: "unknown",
         onSuccess: () => "Success",
         onFail: () => "Fail",
       },
-    ];
+    ]);
 
     expect(engine.run(fact, "testRule")).rejects.toThrow(
       'Condition "unknown" not found'
@@ -259,14 +421,14 @@ describe("Engine: Exceptions", () => {
       },
     };
     const engine = new Engine();
-    engine.rule = [
+    engine.addRule([
       {
         name: "testRule",
         condition: { and: [{ path: "age", operator: "unknown", value: 30 }] },
         onSuccess: () => "Success",
         onFail: () => "Fail",
       },
-    ];
+    ]);
 
     expect(engine.run(fact, "testRule")).rejects.toThrow(
       'Operator "unknown" not found'
