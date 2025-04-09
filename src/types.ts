@@ -68,6 +68,7 @@ export namespace RuleEngine {
     condition: Condition | string;
     onSuccess: RuleCallback;
     onFail: RuleCallback;
-    cache?: boolean;
+    // TODO: Provision for custom cache key
+    cache?: boolean | string;
   };
 }

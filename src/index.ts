@@ -180,16 +180,33 @@ export class Engine {
   }
 
   protected async cachedRuleEvaluate(rule: RuleEngine.Rule) {
-    return get(rule, "cache", true)
-      ? memoize(
-          async (fact: object, condition: RuleEngine.Condition | string) => {
-            // This is the actual function that will be memoized
-            return this.evaluateRule(fact, condition);
-          },
-          (fact: object, condition: RuleEngine.Condition | string) =>
-            `${rule.name}-${JSON.stringify(fact)}`
-        )
-      : async (fact: object) => this.evaluateRule(fact, rule.condition);
+    const cacheMethod = get(rule, "cache", true);
+
+    if (cacheMethod === false) {
+      return async (fact: object) => this.evaluateRule(fact, rule.condition);
+    }
+
+    const methodToCache = async (
+      fact: object,
+      condition: RuleEngine.Condition | string
+    ) => {
+      return this.evaluateRule(fact, condition);
+    };
+
+    // TODO: Provision for custom cache key
+    if (typeof cacheMethod === "string") {
+      return memoize(
+        methodToCache,
+        (fact: object, condition: RuleEngine.Condition | string) =>
+          `${rule.name}-${get(fact, cacheMethod)}`
+      );
+    }
+
+    return memoize(
+      methodToCache,
+      (fact: object, condition: RuleEngine.Condition | string) =>
+        `${rule.name}-${JSON.stringify(fact)}`
+    );
   }
 
   public async run(fact: object, ruleName: string) {
