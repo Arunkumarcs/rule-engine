@@ -2,11 +2,6 @@
 
 A simple rule engine for evaluating conditions and executing actions based on predefined rules.
 
-
-# Inspired from [json-rules-engine](https://www.npmjs.com/package/json-rules-engine?activeTab=readme)
-### A simple rules engine for evaluating conditions and executing actions based on predefined rules.
-
-
 ## Installation
 
 ```bash
