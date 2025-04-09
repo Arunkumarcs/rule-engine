@@ -21,6 +21,7 @@ export namespace RuleEngine {
     name: string;
     condition: Condition | string;
   };
+
   type RuleCallback =
     | string
     | number
@@ -30,18 +31,7 @@ export namespace RuleEngine {
     | number[]
     | boolean[]
     | object[]
-    | ((
-        fact: object,
-        rule: RuleCallbackMeta
-      ) =>
-        | string
-        | number
-        | boolean
-        | object
-        | string[]
-        | number[]
-        | boolean[]
-        | object[]);
+    | ((fact: object, rule: RuleCallbackMeta) => RuleCallback);
 
   export interface RuleCondition {
     path: string;
