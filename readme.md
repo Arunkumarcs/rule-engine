@@ -1,6 +1,6 @@
 # Rule Engine
 
-A simple rule engine for evaluating conditions and executing actions based on predefined rules.
+A light weight rule engine for evaluating conditions and executing actions based on predefined rules.
 
 ## Installation
 
