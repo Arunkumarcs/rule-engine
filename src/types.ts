@@ -1,42 +1,83 @@
-// Primitive operators
-type Operator =
-  | "==="
-  | "!=="
-  | ">"
-  | ">="
-  | "<"
-  | "<="
-  | "=="
-  | "!="
-  | "like%"
-  | "%like"
-  | "%like%"
-  | string;
+export namespace RuleEngine {
+  type Operator =
+    | "==="
+    | "!=="
+    | ">"
+    | ">="
+    | "<"
+    | "<="
+    | "=="
+    | "!="
+    | "like%"
+    | "%like"
+    | "%like%"
+    | "in"
+    | "!in"
+    | "includes"
+    | "!includes"
+    | string;
 
-// Nested group of conditions (supports recursion)
-interface ConditionGroup {
-  all?: Rule[];
-  any?: Rule[];
-}
+  type RuleCallbackMeta = {
+    name: string;
+    condition: Condition | string;
+  };
+  type RuleCallback =
+    | string
+    | number
+    | boolean
+    | object
+    | string[]
+    | number[]
+    | boolean[]
+    | object[]
+    | ((
+        fact: object,
+        rule: RuleCallbackMeta
+      ) =>
+        | string
+        | number
+        | boolean
+        | object
+        | string[]
+        | number[]
+        | boolean[]
+        | object[]);
 
-// A rule is either a condition or a group of conditions
-type Rule = RuleCondition | ConditionGroup;
+  export interface RuleCondition {
+    path: string;
+    operator: Operator;
+    value: any;
+  }
 
-// Full rule engine definition
-interface RuleSet {
-  conditions: ConditionGroup;
-  onSuccess?: () => void;
-  onFail?: () => void;
-}
+  export type ConditionType = RuleCondition | Condition | string;
 
-// Full rule engine definition
-export interface RuleMap {
-  [k: string]: RuleSet;
-}
+  export type ConditionAnd = {
+    and: ConditionType[];
+  };
 
-// Basic condition
-export interface RuleCondition {
-  path: string;
-  operator: Operator;
-  value: any;
+  export type ConditionOr = {
+    or: ConditionType[];
+  };
+
+  export type Condition = ConditionAnd | ConditionOr;
+
+  export type NamedCondition = {
+    name: string;
+    condition: Condition;
+  };
+
+  export type OperatorCallback = (a: any, b: any) => Promise<boolean>;
+
+  export type NamedOperator = {
+    name: string;
+    operator: OperatorCallback;
+  };
+
+  export type Rule = {
+    name: string;
+    condition: Condition | string;
+    onSuccess: RuleCallback;
+    onFail: RuleCallback;
+    cache?: boolean;
+  };
 }
