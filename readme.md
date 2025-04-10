@@ -122,10 +122,10 @@ engine.addCondition(condition1);
 
 ## 📘 API
 
-:::mermaid
+```mermaid
 flowchart LR
     Rule --> Condition --> Operator
-:::
+```
 
 #### `let engine = new Engine()`
 Creates a new instance of the RuleEngine.
