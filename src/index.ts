@@ -1,4 +1,7 @@
-import _ from "lodash";
+import get from "lodash.get";
+import includes from "lodash.includes";
+import startsWith from "lodash.startswith";
+import endsWith from "lodash.endswith";
 import { RuleMap, RuleCondition } from "./types";
 
 export class RuleEngine {
@@ -10,15 +13,15 @@ export class RuleEngine {
   }[] = [
     {
       key: "%like%",
-      val: (a, b) => Promise.resolve(_.includes(a, b)),
+      val: (a, b) => Promise.resolve(includes(a, b)),
     },
     {
       key: "%like",
-      val: (a, b) => Promise.resolve(_.endsWith(a, b)),
+      val: (a, b) => Promise.resolve(endsWith(a, b)),
     },
     {
       key: "like%",
-      val: (a, b) => Promise.resolve(_.startsWith(a, b)),
+      val: (a, b) => Promise.resolve(startsWith(a, b)),
     },
     {
       key: "===",
@@ -71,7 +74,7 @@ export class RuleEngine {
     fact: object,
     { path, operator, value }: RuleCondition
   ): Promise<boolean> {
-    const actual = _.get(fact, path, false);
+    const actual = get(fact, path, false);
     const fn = this.operators.get(operator);
     return fn ? await fn(actual, value) : Promise.resolve(false);
   }
