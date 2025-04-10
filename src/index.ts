@@ -1,5 +1,10 @@
 import { RuleEngine } from "./types";
-import { get, memoize, includes, startsWith, endsWith, isArray } from "lodash";
+import get from "lodash.get";
+import includes from "lodash.includes";
+import memoize from "lodash.memoize";
+import startsWith from "lodash.startswith";
+import endsWith from "lodash.endswith";
+import isArray from "lodash.isarray";
 
 export class Engine {
   protected namedRules: Map<string, RuleEngine.Rule> = new Map();

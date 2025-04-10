@@ -2,6 +2,13 @@
 A simple rule engine for evaluating conditions and executing actions based on predefined rules.
 Rules can be a JSON data or dynamic data from Database.
 
+## Badge
+[![NPM Version](https://img.shields.io/npm/v/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
+[![NPM Downloads](https://img.shields.io/npm/dm/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
+[![License](https://img.shields.io/npm/l/@arunkumar_h/rule-engine)](https://github.com/arunkumar-h/rule-engine/blob/main/LICENSE)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@arunkumar_h/rule-engine)](https://bundlephobia.com/package/@arunkumar_h/rule-engine)
+[![Install size](https://packagephobia.com/badge?p=@arunkumar_h/rule-engine)](https://packagephobia.com/result?p=@arunkumar_h/rule-engine)
+
 ## Blocks of rule engine
 :::mermaid
 flowchart LR
@@ -111,3 +118,13 @@ const rule = {
 engine.addRule(rule);
 engine.addCondition(condition1);
 ```
+
+### TODO
+- Add support for `https://www.npmjs.com/package/jsonpath-plus`
+- Add support for `https://www.npmjs.com/package/hash-it`
+
+### Badges
+- https://badge.fury.io/for/js/json-rules-engine
+- https://packagephobia.com/result?p=json-rules-engine
+- https://shields.io/docs
+- https://bundlephobia.com/package/@arunkumar_h/rule-engine
