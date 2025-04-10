@@ -3,3 +3,6 @@ tests/
 *.ts
 *.map
 coverage/
+.husky/
+badges/
+node_modules/
