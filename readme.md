@@ -128,3 +128,4 @@ engine.addCondition(condition1);
 - https://packagephobia.com/result?p=json-rules-engine
 - https://shields.io/docs
 - https://bundlephobia.com/package/@arunkumar_h/rule-engine
+- https://bundlephobia.com/package/@arunkumar_h/rule-engine@1.2.4
