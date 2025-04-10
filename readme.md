@@ -1,21 +1,30 @@
-# Rule Engine
-A simple rule engine for evaluating conditions and executing actions based on predefined rules.
-Rules can be a JSON data or dynamic data from Database.
+# @arunkumar_h/rule-engine
 
-## Badge
 [![NPM Version](https://img.shields.io/npm/v/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
 [![NPM Downloads](https://img.shields.io/npm/dm/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
 [![License](https://img.shields.io/npm/l/@arunkumar_h/rule-engine)](https://github.com/arunkumar-h/rule-engine/blob/main/LICENSE)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/@arunkumar_h/rule-engine)](https://bundlephobia.com/package/@arunkumar_h/rule-engine)
 [![Install size](https://packagephobia.com/badge?p=@arunkumar_h/rule-engine)](https://packagephobia.com/result?p=@arunkumar_h/rule-engine)
 
-## Blocks of rule engine
-:::mermaid
-flowchart LR
-    Rule --> Condition --> Operator
-:::
+> A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
 
-## Default Operators
+## 📦 Installation
+
+```bash
+npm install @arunkumar_h/rule-engine
+```
+
+```bash
+yarn add @arunkumar_h/rule-engine
+```
+
+## 🧠 Features
+- ✅ Supports `and`, `or`, and nested logical conditions
+- 🔧 Custom operators and facts
+- 📜 Written in TypeScript, fully typed
+- 🚀 Lightweight
+
+### Default Operators
 The following operators are available by default:
 
 * `===`: Strict equality check
@@ -34,22 +43,8 @@ The following operators are available by default:
 * `includes`: Value includes the given value
 * `!includes`: Value does not include the given value
 
-## API
-#### `let engine = new Engine()`
-Creates a new instance of the RuleEngine.
 
-#### `engine.addRule(namedRule)` or `engine.addRule([namedRule[0], namedRule[1]....])`
-Provision to add named rules to engine dynamically.
-
-#### `engine.addCondition(nammedCondition)` or `engine.addCondition([nammedCondition[0], nammedCondition[1]....])`
-Provision to add new condition to engine dynamically.
-Condition can invoke another namedCondition.
-
-#### `engine.addOperator(nammedOperator)` or `engine.addOperator([nammedOperator[0], nammedOperator[1]....])`
-Provision to add new operator to engine dynamically.
-Operator can also be an async function.
-
-## Adding Rule
+### Adding Rule
 
 - `name` identifies the name of the rule. The name should always be unique. A single engine cannot have the same rule added more than once.
 - `condition` This containes `and` and `or` as main block. 
@@ -118,6 +113,32 @@ const rule = {
 engine.addRule(rule);
 engine.addCondition(condition1);
 ```
+
+
+## 📘 API
+
+:::mermaid
+flowchart LR
+    Rule --> Condition --> Operator
+:::
+
+#### `let engine = new Engine()`
+Creates a new instance of the RuleEngine.
+
+#### `engine.addRule(namedRule)` or `engine.addRule([namedRule[0], namedRule[1]....])`
+Provision to add named rules to engine dynamically.
+
+#### `engine.addCondition(nammedCondition)` or `engine.addCondition([nammedCondition[0], nammedCondition[1]....])`
+Provision to add new condition to engine dynamically.
+Condition can invoke another namedCondition.
+
+#### `engine.addOperator(nammedOperator)` or `engine.addOperator([nammedOperator[0], nammedOperator[1]....])`
+Provision to add new operator to engine dynamically.
+Operator can also be an async function.
+
+## 🛠️ Advanced Usage
+
+## 📄 License
 
 ### TODO
 - Add support for `https://www.npmjs.com/package/jsonpath-plus`
