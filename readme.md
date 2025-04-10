@@ -2,6 +2,13 @@
 
 A light weight rule engine for evaluating conditions and executing actions based on predefined rules.
 
+[![NPM Version](https://img.shields.io/npm/v/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
+[![NPM Downloads](https://img.shields.io/npm/dm/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
+[![License](https://img.shields.io/npm/l/@arunkumar_h/rule-engine)](https://github.com/arunkumar-h/rule-engine/blob/main/LICENSE)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@arunkumar_h/rule-engine)](https://bundlephobia.com/package/@arunkumar_h/rule-engine)
+[![Install size](https://packagephobia.com/badge?p=@arunkumar_h/rule-engine)](https://packagephobia.com/result?p=@arunkumar_h/rule-engine)
+
+
 ## Installation
 
 ```bash
