@@ -4,7 +4,10 @@ import includes from "lodash.includes";
 import memoize from "lodash.memoize";
 import startsWith from "lodash.startswith";
 import endsWith from "lodash.endswith";
-import isArray from "lodash.isarray";
+
+function isArray<T>(value: unknown): value is T[] {
+  return Array.isArray(value);
+}
 
 export class Engine {
   protected namedRules: Map<string, RuleEngine.Rule> = new Map();
