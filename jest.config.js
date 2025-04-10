@@ -6,4 +6,5 @@ module.exports = {
     "^.+.tsx?$": ["ts-jest", {}],
   },
   testMatch: ["**/*.test.ts", "**/*.spec.ts"],
+  coverageReporters: ["lcov", "json-summary"],
 };
