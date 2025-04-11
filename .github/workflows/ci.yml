@@ -61,7 +61,7 @@ jobs:
           echo "NPM_TOKEN set? ${{ secrets.NPM_TOKEN != '' }}"
           echo "GITHUB_TOKEN set? ${{ secrets.GITHUB_TOKEN != '' }}"
       - name: Release with semantic-release
-        run: npm run semantic-release
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: CI=true NPM_TOKEN=${{ secrets.NPM_TOKEN }} GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx semantic-release 
+        # env:
+        #   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
