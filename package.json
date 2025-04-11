@@ -19,9 +19,12 @@
     "access": "public"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
+    "test:coverage": "npm test --coverage",
+    "test:badges": "npm run test:coverage  && jest-coverage-badges output ./badges",
     "build": "tsc",
-    "tsup_build": "tsup src/index.ts --dts --format cjs --out-dir dist"
+    "tsup_build": "tsup src/index.ts --dts --format cjs --out-dir dist",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
