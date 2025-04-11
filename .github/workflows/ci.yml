@@ -59,11 +59,9 @@ jobs:
       - name: Debug secrets
         run: |
           echo "NPM_TOKEN set? ${{ secrets.NPM_TOKEN != '' }}"
-          echo "GH_TOKEN set? ${{ secrets.GH_TOKEN != '' }}"
-          echo "NPM_TOKEN: ${{ secrets.NPM_TOKEN }}"
-          echo "GH_TOKEN: ${{ secrets.GH_TOKEN }}"
+          echo "GITHUB_TOKEN set? ${{ secrets.GITHUB_TOKEN != '' }}"
       - name: Release with semantic-release
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: NPM_TOKEN=$NPM_TOKEN GH_TOKEN=$GH_TOKEN npx semantic-release
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm semantic-release
