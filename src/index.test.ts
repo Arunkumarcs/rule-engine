@@ -3,7 +3,7 @@ import { RuleEngine } from "./index";
 
 describe("RuleEngine", () => {
   it("should evaluate a rule with all conditions", async () => {
-    const fact = { name: "John Doe", age: 30, country: "USA" };
+    const fact = { name: "John Doe", age: 10, country: "USA" };
     const rule = {
       conditions: {
         all: [
