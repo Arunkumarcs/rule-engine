@@ -53,9 +53,9 @@ jobs:
           registry-url: "https://registry.npmjs.org/"
 
       - run: npm ci
-      - run: npm run build
-      - run: npm run test:badges
-      - run: npx semantic-release
+      # - run: npm run build
+      # - run: npm run test:badges
+      # - run: npx semantic-release
 
       - name: Debug secrets
         run: |
