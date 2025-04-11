@@ -6,3 +6,8 @@ coverage/
 .husky/
 badges/
 node_modules/
+.github/
+.gitignore
+.git/
+.gitmodules
+.releaserc
