@@ -7,6 +7,12 @@ on:
 
 jobs:
   release:
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      packages: write
+      releases: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
