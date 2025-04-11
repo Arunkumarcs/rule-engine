@@ -64,8 +64,8 @@ jobs:
           echo "NPM_TOKEN: ${{ secrets.NPM_TOKEN }}"
           echo "GH_TOKEN: ${{ secrets.GH_TOKEN }}"
 
-      - name: Release with semantic-release
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+      # - name: Release with semantic-release
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #   run: npx semantic-release
