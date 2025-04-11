@@ -25,7 +25,8 @@
     "build": "tsc",
     "tsup_build": "tsup src/index.ts --dts --format cjs --out-dir dist",
     "prepare": "husky",
-    "semantic-release": "semantic-release --branches main"
+    "semantic-release": "semantic-release --branches main",
+    "commit": "cz"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -37,6 +38,7 @@
     "@types/lodash.get": "^4.4.9",
     "@types/lodash.includes": "^4.3.9",
     "@types/lodash.startswith": "^4.2.9",
+    "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
