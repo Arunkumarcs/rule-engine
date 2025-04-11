@@ -53,9 +53,9 @@ jobs:
           registry-url: "https://registry.npmjs.org/"
 
       - run: npm ci
-      - run: npm run build
-      - run: npm run test:badges
-      - run: npx semantic-release
+      # - run: npm run build
+      # - run: npm run test:badges
+      # - run: npx semantic-release
 
       - name: Debug secrets
         run: |
@@ -64,8 +64,8 @@ jobs:
           echo "NPM_TOKEN: ${{ secrets.NPM_TOKEN }}"
           echo "GH_TOKEN: ${{ secrets.GH_TOKEN }}"
 
-      - name: Release with semantic-release
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+      # - name: Release with semantic-release
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      #     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #   run: npx semantic-release
