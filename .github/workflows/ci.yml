@@ -61,7 +61,7 @@ jobs:
           echo "NPM_TOKEN set? ${{ secrets.NPM_TOKEN != '' }}"
           echo "GITHUB_TOKEN set? ${{ secrets.GITHUB_TOKEN != '' }}"
       - name: Set up .npmrc with auth token
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > /home/runner/.npmrc
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
