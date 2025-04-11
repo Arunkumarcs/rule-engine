@@ -19,9 +19,14 @@ jobs:
           node-version: 20
           registry-url: 'https://registry.npmjs.org/'
 
-      - run: npm ci
-      - run: npm run build
-      - run: npm run test:badges
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test and badges
+        run: npm run test:badges
 
       - name: Run semantic-release
         env:
