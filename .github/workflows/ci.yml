@@ -36,23 +36,24 @@ jobs:
       - run: npm run build
       - run: npm run test:badges
 
-  # publish:
-  #   needs: test-and-build
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: write
-  #     pull-requests: write
-  #     issues: write
-  #     packages: write
-  #     releases: write
-  #     workflows: write
-  #     id-token: write
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0 # Required for semantic-release
-  #     - name: Run semantic-release
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-  #       run: npx semantic-release
+  publish:
+    needs: [test-and-build]
+    runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for semantic-release
+
+      - name: Use Node.js {{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: "https://registry.npmjs.org/"
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test:badges
+      - run: npx semantic-release
+      - run: npm run semantic-release
