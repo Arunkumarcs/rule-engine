@@ -56,8 +56,16 @@ jobs:
       - run: npm run build
       - run: npm run test:badges
       - run: npx semantic-release
+
+      - name: Debug secrets
+        run: |
+          echo "NPM_TOKEN set? ${{ secrets.NPM_TOKEN != '' }}"
+          echo "GH_TOKEN set? ${{ secrets.GH_TOKEN != '' }}"
+          echo "NPM_TOKEN: ${{ secrets.NPM_TOKEN }}"
+          echo "GH_TOKEN: ${{ secrets.GH_TOKEN }}"
+
       - name: Release with semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
