@@ -102,7 +102,6 @@ const fact = {
 
 ## Running the Rule Engine
 
-
 ```javascript
 let r = new RuleEngine(rules);
 r.runRule(fact, "level1"); // Evaluates the rule "level1" against the fact
