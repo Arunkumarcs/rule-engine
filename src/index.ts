@@ -1,137 +1,135 @@
-import get from "lodash.get";
 import includes from "lodash.includes";
-import startsWith from "lodash.startswith";
 import endsWith from "lodash.endswith";
-import { RuleMap, RuleCondition } from "./types";
+import startsWith from "lodash.startswith";
+import { N_Engine } from "./types";
 
-export class RuleEngine {
-  private rules: Map<string, any> = new Map();
-  private operators: Map<string, any> = new Map();
-  private defaultOperators: {
-    key: string;
-    val: (a: any, b: any) => Promise<boolean>;
-  }[] = [
-    {
-      key: "%like%",
-      val: (a, b) => Promise.resolve(includes(a, b)),
-    },
-    {
-      key: "%like",
-      val: (a, b) => Promise.resolve(endsWith(a, b)),
-    },
-    {
-      key: "like%",
-      val: (a, b) => Promise.resolve(startsWith(a, b)),
-    },
-    {
-      key: "===",
-      val: (a, b) => Promise.resolve(a === b),
-    },
-    {
-      key: "==",
-      val: (a, b) => Promise.resolve(a == b),
-    },
-    {
-      key: "!==",
-      val: (a, b) => Promise.resolve(a !== b),
-    },
-    {
-      key: "!=",
-      val: (a, b) => Promise.resolve(a != b),
-    },
-    {
-      key: ">",
-      val: (a, b) => Promise.resolve(a > b),
-    },
-    {
-      key: ">=",
-      val: (a, b) => Promise.resolve(a >= b),
-    },
-    {
-      key: "<",
-      val: (a, b) => Promise.resolve(a < b),
-    },
-    {
-      key: "<=",
-      val: (a, b) => Promise.resolve(a <= b),
-    },
-    {
-      key: "in",
-      val: (a, b) => Promise.resolve(Array.isArray(a) && a.includes(b)),
-    },
-  ];
+class Engine {
+  protected namedRules: Map<string, N_Engine.Rule> = new Map();
+  protected namedConditions: Map<string, N_Engine.Condition> = new Map();
+  protected namedOperators: Map<string, N_Engine.OperatorCallback> = new Map(
+    [
+      {
+        key: "%like%",
+        val: async (a: any, b: any) => Promise.resolve(includes(a, b)),
+      },
+      {
+        key: "%like",
+        val: async (a: any, b: any) => Promise.resolve(endsWith(a, b)),
+      },
+      {
+        key: "like%",
+        val: async (a: any, b: any) => Promise.resolve(startsWith(a, b)),
+      },
+      {
+        key: "===",
+        val: async (a: any, b: any) => Promise.resolve(a === b),
+      },
+      {
+        key: "==",
+        val: async (a: any, b: any) => Promise.resolve(a == b),
+      },
+      {
+        key: "!==",
+        val: async (a: any, b: any) => Promise.resolve(a !== b),
+      },
+      {
+        key: "!=",
+        val: async (a: any, b: any) => Promise.resolve(a != b),
+      },
+      {
+        key: ">",
+        val: async (a: any, b: any) => Promise.resolve(a > b),
+      },
+      {
+        key: ">=",
+        val: async (a: any, b: any) => Promise.resolve(a >= b),
+      },
+      {
+        key: "<",
+        val: async (a: any, b: any) => Promise.resolve(a < b),
+      },
+      {
+        key: "<=",
+        val: async (a: any, b: any) => Promise.resolve(a <= b),
+      },
+      {
+        key: "in",
+        val: async (a: any, b: any) => Promise.resolve(includes(b, a)),
+      },
+      {
+        key: "!in",
+        val: async (a: any, b: any) => Promise.resolve(!includes(b, a)),
+      },
+      {
+        key: "includes",
+        val: async (a: any, b: any) => Promise.resolve(includes(a, b)),
+      },
+      {
+        key: "!includes",
+        val: async (a: any, b: any) => Promise.resolve(!includes(a, b)),
+      },
+    ].map((data) => [data.key, data.val])
+  );
 
-  constructor(rules: RuleMap | {}) {
-    this.initial(rules);
+  get rule() {
+    return Object.fromEntries(this.namedRules);
   }
 
-  private initial(rules: RuleMap) {
-    this.rules = new Map(Object.entries(rules));
-    this.defaultOperators.forEach((op) => this.operators.set(op.key, op.val));
+  get condition() {
+    return Object.fromEntries(this.namedConditions);
   }
 
-  private async evaluateCondition(
-    fact: object,
-    { path, operator, value }: RuleCondition
-  ): Promise<boolean> {
-    const actual = get(fact, path, false);
-    const fn = this.operators.get(operator);
-    return fn ? await fn(actual, value) : Promise.resolve(false);
+  get operator() {
+    return Object.fromEntries(this.namedOperators);
   }
 
-  private eventRuleCallback(fact: object) {
-    return async (cond: any) => {
-      if (cond.all || cond.any) {
-        return this.evaluateRule(fact, cond);
-      } else {
-        return this.evaluateCondition(fact, cond);
+  private add(
+    key: string,
+    data: N_Engine.Rule | N_Engine.Condition | N_Engine.OperatorCallback
+  ) {
+    if ("condition" in data) {
+      if (this.namedRules.has(key)) {
+        throw new Error(`Rule ${key} already exists`);
       }
-    };
+      this.namedRules.set(key, data);
+    } else if ("and" in data || "or" in data) {
+      if (this.namedConditions.has(key)) {
+        throw new Error(`Condition ${key} already exists`);
+      }
+      this.namedConditions.set(key, data);
+    } else if (typeof data === "function") {
+      if (this.namedOperators.has(key)) {
+        throw new Error(`Operator ${key} already exists`);
+      }
+      this.namedOperators.set(key, data);
+    } else {
+      throw new Error(`Invalid data type: ${typeof data}`);
+    }
   }
 
-  private async evaluateRule(fact: object, rule: any): Promise<boolean> {
-    if (rule.all) {
-      return (
-        await Promise.all(rule.all.map(this.eventRuleCallback(fact)))
-      ).every((result) => result);
+  addRule(list: N_Engine.NamedRules) {
+    for (const key in list) {
+      if (Object.prototype.hasOwnProperty.call(list, key)) {
+        this.add(key, list[key]);
+      }
     }
-    if (rule.any) {
-      return (
-        await Promise.all(
-          rule.any.map(
-            async (cond: any) => await this.evaluateCondition(fact, cond)
-          )
-        )
-      ).some((result) => result);
-    }
-    return false;
   }
 
-  public async setOperator(
-    symbol: string,
-    callback: (a: any, b: any) => Promise<boolean>
-  ): Promise<boolean> {
-    if (!this.operators.has(symbol)) {
-      this.operators.set(symbol, callback);
-      return true;
+  addCondition(list: N_Engine.NamedConditions) {
+    for (const key in list) {
+      if (Object.prototype.hasOwnProperty.call(list, key)) {
+        this.add(key, list[key]);
+      }
     }
-    return false;
   }
 
-  public async setRule(name: string, rule: object): Promise<boolean> {
-    if (!this.rules.has(name)) {
-      this.rules.set(name, rule);
-      return true;
+  addOperator(list: N_Engine.NamedOperators) {
+    for (const key in list) {
+      if (Object.prototype.hasOwnProperty.call(list, key)) {
+        this.add(key, list[key]);
+      }
     }
-    return false;
-  }
-
-  public async runRule(fact: object, ruleIndex: string): Promise<any> {
-    const rule = this.rules.get(ruleIndex);
-    const result = await this.evaluateRule(fact, rule.conditions);
-    if (result) {
-      return rule.onSuccess(fact);
-    }
-    return rule.onFail(fact);
   }
 }
+
+export default Engine;

@@ -45,6 +45,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "jsonpath-plus": "^10.3.0",
     "lodash.endswith": "^4.2.1",
     "lodash.get": "^4.4.2",
     "lodash.includes": "^4.3.0",
