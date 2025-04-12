@@ -27,26 +27,27 @@ export namespace N_Engine {
     | object[]
     | ((fact: object, name: string) => RuleCallback);
 
-  type ConditionName = string;
+  export type ConditionName = string;
 
   export type OperatorCallback = (a: any, b: any) => Promise<boolean>;
 
-  type ConditionOperation = {
+  export type ConditionOperation = {
     path: string;
     operator: Operator;
     value: any;
   };
 
-  type ConditionType = ConditionOperation | Condition | ConditionName;
+  export type ConditionType = ConditionOperation | Condition | ConditionName;
 
-  export type Condition =
-    | { and: ConditionType[]; or?: never }
-    | { or: ConditionType[]; and?: never };
+  export type ConditionAnd = { and: ConditionType[] };
+  export type ConditionOr = { or: ConditionType[] };
+  export type Condition = ConditionAnd | ConditionOr;
 
   export type Rule = {
     condition: Condition | ConditionName;
     onSuccess: RuleCallback;
     onFail: RuleCallback;
+    cache: boolean;
   };
   export type NamedRules = Record<string, Rule>;
   export type NamedConditions = Record<string, Condition>;

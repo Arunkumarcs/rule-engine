@@ -1,7 +1,10 @@
 import includes from "lodash.includes";
 import endsWith from "lodash.endswith";
 import startsWith from "lodash.startswith";
+import get from "lodash.get";
+import memoize from "lodash.memoize";
 import { N_Engine } from "./types";
+import { JSONPath } from "jsonpath-plus";
 
 class Engine {
   protected namedRules: Map<string, N_Engine.Rule> = new Map();
@@ -120,16 +123,138 @@ class Engine {
     }
   }
 
-  addRule(list: N_Engine.NamedRules) {
+  public addRule(list: N_Engine.NamedRules) {
     this.addLoop(list);
   }
 
-  addCondition(list: N_Engine.NamedConditions) {
+  public addCondition(list: N_Engine.NamedConditions) {
     this.addLoop(list);
   }
 
-  addOperator(list: N_Engine.NamedOperators) {
+  public addOperator(list: N_Engine.NamedOperators) {
     this.addLoop(list);
+  }
+
+  protected async doOperation(
+    fact: object,
+    { path, operator, value }: N_Engine.ConditionOperation
+  ): Promise<boolean> {
+    const actual = JSONPath({
+      path,
+      json: fact,
+      resultType: "value",
+      ignoreEvalErrors: true,
+    });
+
+    const fn = this.namedOperators.get(operator);
+
+    if (!fn) {
+      throw new Error(`Operator "${operator}" not found`);
+    }
+
+    return fn(actual, value);
+  }
+
+  protected async evaluateConditionOperation(
+    fact: object,
+    cond: N_Engine.ConditionType
+  ) {
+    if (typeof cond === "string" || "and" in cond || "or" in cond) {
+      return this.evaluateRule(fact, cond);
+    } else if ("operator" in cond) {
+      return this.doOperation(fact, cond);
+    }
+  }
+
+  protected guardCondition(
+    condition: object
+  ): condition is N_Engine.ConditionAnd | N_Engine.ConditionOr {
+    return (
+      typeof condition === "object" && ("and" in condition || "or" in condition)
+    );
+  }
+
+  protected async evaluateRule(
+    fact: object,
+    condition: N_Engine.Condition | N_Engine.ConditionName
+  ): Promise<any> {
+    let namedCondition: unknown;
+    if (typeof condition === "string") {
+      namedCondition = this.namedConditions.get(condition);
+    } else {
+      namedCondition = condition;
+    }
+
+    if (!namedCondition) {
+      throw new Error(`Condition "${condition}" not found`);
+    }
+
+    if (this.guardCondition(namedCondition) && "and" in namedCondition) {
+      return (
+        await Promise.all(
+          namedCondition.and.map(async (cond: N_Engine.ConditionType) =>
+            this.evaluateConditionOperation(fact, cond)
+          )
+        )
+      ).every((result) => result);
+    }
+    if (this.guardCondition(namedCondition) && "or" in namedCondition) {
+      return (
+        await Promise.all(
+          namedCondition.or.map(async (cond: N_Engine.ConditionType) =>
+            this.evaluateConditionOperation(fact, cond)
+          )
+        )
+      ).some((result) => result);
+    }
+  }
+
+  protected async cachedRuleEvaluate(ruleName: string, rule: N_Engine.Rule) {
+    const cacheMethod = get(rule, "cache", true);
+
+    if (cacheMethod === false) {
+      return async (fact: object) => this.evaluateRule(fact, rule.condition);
+    }
+
+    const methodToCache = this.evaluateRule;
+
+    // TODO: Provision for custom cache key
+    if (typeof cacheMethod === "string") {
+      return memoize(
+        methodToCache,
+        (fact: object) => `${ruleName}-${get(fact, cacheMethod)}`
+      );
+    }
+
+    return memoize(
+      methodToCache,
+      (fact: object) => `${ruleName}-${JSON.stringify(fact)}`
+    );
+  }
+
+  public async run(fact: object, ruleName: string) {
+    const rule = this.namedRules.get(ruleName) as N_Engine.Rule;
+
+    if (!rule) {
+      throw new Error(`Rule "${ruleName}" not found`);
+    }
+
+    const result = await (
+      await this.cachedRuleEvaluate(ruleName, rule)
+    )(fact, rule.condition);
+
+    if (result) {
+      if (typeof rule.onSuccess === "function") {
+        return rule.onSuccess(fact, ruleName);
+      } else {
+        return rule.onSuccess;
+      }
+    }
+    if (typeof rule.onFail === "function") {
+      return rule.onFail(fact, ruleName);
+    } else {
+      return rule.onFail;
+    }
   }
 }
 
