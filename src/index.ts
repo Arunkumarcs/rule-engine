@@ -176,7 +176,7 @@ class Engine {
 
   protected async evaluateRule(
     fact: object,
-    condition: N_Engine.Condition | N_Engine.ConditionName
+    condition: N_Engine.Condition | string
   ): Promise<any> {
     let namedCondition: unknown;
     if (typeof condition === "string") {

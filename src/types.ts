@@ -27,7 +27,6 @@ export namespace N_Engine {
     | object[]
     | ((fact: object, name: string) => RuleCallback);
 
-  export type ConditionName = string;
 
   export type OperatorCallback = (a: any, b: any) => Promise<boolean>;
 
@@ -37,14 +36,14 @@ export namespace N_Engine {
     value: any;
   };
 
-  export type ConditionType = ConditionOperation | Condition | ConditionName;
+  export type ConditionType = ConditionOperation | Condition | string;
 
   export type ConditionAnd = { and: ConditionType[] };
   export type ConditionOr = { or: ConditionType[] };
   export type Condition = ConditionAnd | ConditionOr;
 
   export type Rule = {
-    condition: Condition | ConditionName;
+    condition: Condition | string;
     onSuccess: RuleCallback;
     onFail: RuleCallback;
     cache: boolean;
