@@ -107,28 +107,29 @@ class Engine {
     }
   }
 
-  addRule(list: N_Engine.NamedRules) {
+  private addLoop(
+    list:
+      | N_Engine.NamedRules
+      | N_Engine.NamedConditions
+      | N_Engine.NamedOperators
+  ) {
     for (const key in list) {
       if (Object.prototype.hasOwnProperty.call(list, key)) {
         this.add(key, list[key]);
       }
     }
+  }
+
+  addRule(list: N_Engine.NamedRules) {
+    this.addLoop(list);
   }
 
   addCondition(list: N_Engine.NamedConditions) {
-    for (const key in list) {
-      if (Object.prototype.hasOwnProperty.call(list, key)) {
-        this.add(key, list[key]);
-      }
-    }
+    this.addLoop(list);
   }
 
   addOperator(list: N_Engine.NamedOperators) {
-    for (const key in list) {
-      if (Object.prototype.hasOwnProperty.call(list, key)) {
-        this.add(key, list[key]);
-      }
-    }
+    this.addLoop(list);
   }
 }
 
