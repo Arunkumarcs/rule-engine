@@ -1,27 +1,21 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   pull_request:
     branches:
       - "*"
 
 jobs:
   test-and-build:
-    permissions:
-      contents: write
-      pull-requests: write
-      issues: write
-      packages: write
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [20.x]
 
-    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,42 +28,34 @@ jobs:
           registry-url: "https://registry.npmjs.org/"
 
       - run: npm ci
-      - run: npm run build
-      - run: npm run test:badges
+      - run: npm run test
 
-  publish:
-    needs: [test-and-build]
-    runs-on: ubuntu-latest
+  # publish:
+  #   permissions:
+  #     contents: write
+  #     pull-requests: write
+  #     issues: write
+  #     packages: write
+  #   needs: [test-and-build]
+  #   runs-on: ubuntu-latest
 
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Required for semantic-release
+  #   if: github.ref == 'refs/heads/main'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0 # Required for semantic-release
 
-      - name: Use Node.js {{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          registry-url: "https://registry.npmjs.org/"
+  #     - name: Use Node.js {{ matrix.node-version }}
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
+  #         registry-url: "https://registry.npmjs.org/"
 
-      - run: npm ci
-      - run: npm run build
-      - run: npm run test:badges
+  #     - run: npm ci
+  #     - run: npm run build
 
-      - name: Debug secrets
-        run: |
-          echo "NPM_TOKEN set? ${{ secrets.NPM_TOKEN != '' }}"
-          echo "GITHUB_TOKEN set? ${{ secrets.GITHUB_TOKEN != '' }}"
-
-      - name: Set up .npmrc with auth token
-        run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}"
-        # run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > /home/runner/work/_temp/.npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Run semantic-release
-        run: npx semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: Run semantic-release
+  #       run: npx semantic-release
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
