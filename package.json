@@ -1,6 +1,6 @@
 {
   "name": "@arunkumar_h/rule-engine",
-  "version": "0.0.0-development",
+  "version": "1.3.0",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,20 +19,15 @@
     "access": "public"
   },
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest",
     "test:coverage": "npm test --coverage",
     "test:badges": "npm run test:coverage  && jest-coverage-badges output ./badges",
     "build": "tsc",
     "tsup_build": "tsup src/index.ts --dts --format cjs --out-dir dist",
     "prepare": "husky",
-    "semantic-release": "semantic-release --branches main",
     "commit": "cz"
   },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^11.0.1",
-    "@semantic-release/npm": "^12.0.1",
     "@types/jest": "^29.5.14",
     "@types/lodash.endswith": "^4.2.9",
     "@types/lodash.get": "^4.4.9",
