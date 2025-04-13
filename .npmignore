@@ -5,9 +5,10 @@ coverage/
 node_modules/
 src/
 .gitignore
-.releaserc
+commitlint.config.js
 jest.config.js
 package-lock.json
+release.config.js
 tsconfig.json
 tsconfig.node.json
 .npmignore
