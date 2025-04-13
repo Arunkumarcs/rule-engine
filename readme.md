@@ -1,6 +1,6 @@
 # Rule Engine
 
-A light weight rule engine for evaluating conditions and executing actions based on predefined rules.
+> A light weight rule engine for evaluating conditions and executing actions based on predefined rules.
 
 [![NPM Version](https://img.shields.io/npm/v/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
 [![NPM Downloads](https://img.shields.io/npm/dm/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
@@ -12,7 +12,6 @@ A light weight rule engine for evaluating conditions and executing actions based
 [![badge-functions](badges/badge-functions.svg)](badges/badge-functions.svg)
 [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
 [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
-
 
 ## Installation
 
