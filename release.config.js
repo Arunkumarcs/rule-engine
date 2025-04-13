@@ -1,6 +1,6 @@
 module.exports = {
   branches: ["main"],
-  range: ">=1.4.2",
+  range: ">=1.4.3",
   plugins: [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
