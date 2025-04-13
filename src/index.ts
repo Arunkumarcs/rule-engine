@@ -95,6 +95,7 @@ class Engine {
     fact: object,
     { path, operator, value }: N_Engine.ConditionOperation
   ): Promise<boolean> {
+    // TODO: optimize
     const actual = JSONPath({
       path,
       json: fact,
