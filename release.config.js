@@ -31,6 +31,7 @@ module.exports = {
         assets: ["CHANGELOG.md", "package.json"],
         message:
           "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
+        skipHooks: true, // ⛔️ skips husky hooks like commit-msg
       },
     ],
   ],
