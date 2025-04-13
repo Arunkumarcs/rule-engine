@@ -144,10 +144,7 @@ Operator can also be an async function.
 ## 🛠️ Advanced Usage
 
 ## 📄 License
-
-### TODO
-- Add support for `https://www.npmjs.com/package/jsonpath-plus`
-- Add support for `https://www.npmjs.com/package/hash-it`
+[MIT](./LICENSE)
 
 ### Badges
 - https://badge.fury.io/for/js/json-rules-engine
