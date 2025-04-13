@@ -1,0 +1,17 @@
+name: Test Trigger
+
+on:
+  push:
+    branches:
+      - main
+      - beta
+      - alpha
+      - dev
+      - rc
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say hello
+        run: echo "Push triggered on ${{ github.ref }}"
