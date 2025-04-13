@@ -6,72 +6,28 @@ import memoize from "lodash.memoize";
 import { N_Engine } from "./types";
 import { JSONPath } from "jsonpath-plus";
 
+const defaultOperators = {
+  "%like%": async (a: string, b: string) => includes(a, b),
+  "%like": async (a: string, b: string) => endsWith(a, b),
+  "like%": async (a: string, b: string) => startsWith(a, b),
+  "===": async (a: any, b: any) => a === b,
+  "==": async (a: any, b: any) => a == b,
+  "!==": async (a: any, b: any) => a !== b,
+  "!=": async (a: any, b: any) => a != b,
+  ">": async (a: any, b: any) => a > b,
+  ">=": async (a: any, b: any) => a >= b,
+  "<": async (a: any, b: any) => a < b,
+  "<=": async (a: any, b: any) => a <= b,
+  in: async (a: any, b: any[]) => includes(b, a),
+  "!in": async (a: any, b: any[]) => !includes(b, a),
+  includes: async (a: any[], b: any) => includes(a, b),
+};
+
 class Engine {
   protected namedRules: Map<string, N_Engine.Rule> = new Map();
   protected namedConditions: Map<string, N_Engine.Condition> = new Map();
   protected namedOperators: Map<string, N_Engine.OperatorCallback> = new Map(
-    [
-      {
-        key: "%like%",
-        val: async (a: any, b: any) => Promise.resolve(includes(a, b)),
-      },
-      {
-        key: "%like",
-        val: async (a: any, b: any) => Promise.resolve(endsWith(a, b)),
-      },
-      {
-        key: "like%",
-        val: async (a: any, b: any) => Promise.resolve(startsWith(a, b)),
-      },
-      {
-        key: "===",
-        val: async (a: any, b: any) => Promise.resolve(a === b),
-      },
-      {
-        key: "==",
-        val: async (a: any, b: any) => Promise.resolve(a == b),
-      },
-      {
-        key: "!==",
-        val: async (a: any, b: any) => Promise.resolve(a !== b),
-      },
-      {
-        key: "!=",
-        val: async (a: any, b: any) => Promise.resolve(a != b),
-      },
-      {
-        key: ">",
-        val: async (a: any, b: any) => Promise.resolve(a > b),
-      },
-      {
-        key: ">=",
-        val: async (a: any, b: any) => Promise.resolve(a >= b),
-      },
-      {
-        key: "<",
-        val: async (a: any, b: any) => Promise.resolve(a < b),
-      },
-      {
-        key: "<=",
-        val: async (a: any, b: any) => Promise.resolve(a <= b),
-      },
-      {
-        key: "in",
-        val: async (a: any, b: any) => Promise.resolve(includes(b, a)),
-      },
-      {
-        key: "!in",
-        val: async (a: any, b: any) => Promise.resolve(!includes(b, a)),
-      },
-      {
-        key: "includes",
-        val: async (a: any, b: any) => Promise.resolve(includes(a, b)),
-      },
-      {
-        key: "!includes",
-        val: async (a: any, b: any) => Promise.resolve(!includes(a, b)),
-      },
-    ].map((data) => [data.key, data.val])
+    Object.entries(defaultOperators)
   );
 
   get rule() {
@@ -177,7 +133,7 @@ class Engine {
   protected async evaluateRule(
     fact: object,
     condition: N_Engine.Condition | string
-  ): Promise<any> {
+  ): Promise<boolean> {
     let namedCondition: unknown;
     if (typeof condition === "string") {
       namedCondition = this.namedConditions.get(condition);
@@ -207,13 +163,14 @@ class Engine {
         )
       ).some((result) => result);
     }
+    return false;
   }
 
   protected async cachedRuleEvaluate(ruleName: string, rule: N_Engine.Rule) {
     const cacheMethod = get(rule, "cache", true);
 
     if (cacheMethod === false) {
-      return async (fact: object) => this.evaluateRule(fact, rule.condition);
+      return this.evaluateRule;
     }
 
     const methodToCache = this.evaluateRule;

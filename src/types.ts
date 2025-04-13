@@ -27,8 +27,7 @@ export namespace N_Engine {
     | object[]
     | ((fact: object, name: string) => RuleCallback);
 
-
-  export type OperatorCallback = (a: any, b: any) => Promise<boolean>;
+  export type OperatorCallback = (...arg: any) => Promise<boolean>;
 
   export type ConditionOperation = {
     path: string;
