@@ -13,7 +13,7 @@ export class RuleEngine {
   }[] = [
     {
       key: "%like%",
-      val: (a, b) => Promise.resolve(includes(a, b)),
+      val: (a, b: any) => Promise.resolve(includes(a, b)),
     },
     {
       key: "%like",
