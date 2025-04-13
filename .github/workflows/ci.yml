@@ -43,7 +43,15 @@ jobs:
     needs: [test-and-build]
     runs-on: ubuntu-latest
 
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/rc'
+    if: |
+      github.event_name == 'push' &&
+      (
+        github.ref == 'refs/heads/main' ||
+        github.ref == 'refs/heads/beta' ||
+        github.ref == 'refs/heads/alpha' ||
+        github.ref == 'refs/heads/dev' ||
+        github.ref == 'refs/heads/rc'
+      )
     steps:
       - uses: actions/checkout@v4
         with:
