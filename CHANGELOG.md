@@ -1,3 +1,12 @@
+## [1.5.2-dev.1](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.1...v1.5.2-dev.1) (2025-04-13)
+
+
+### Bug Fixes
+
+* prerelease ([#39](https://github.com/Arunkumarcs/rule-engine/issues/39)) ([0ab2c4b](https://github.com/Arunkumarcs/rule-engine/commit/0ab2c4bab4cddaea488ef7d200124604acc3d0a6))
+* related ([aae6648](https://github.com/Arunkumarcs/rule-engine/commit/aae6648e8e5f801d9ecdc4b384c9daee161de137))
+* release ([#40](https://github.com/Arunkumarcs/rule-engine/issues/40)) ([0b0e90d](https://github.com/Arunkumarcs/rule-engine/commit/0b0e90d9c0d245cf8078f8e55d36f9869b6dd094))
+
 # [1.0.0-dev.2](https://github.com/Arunkumarcs/rule-engine/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2025-04-13)
 
 
