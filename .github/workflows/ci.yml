@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+      - beta
+      - alpha
+      - dev
+      - rc
   pull_request:
     branches:
       - "*"
@@ -39,7 +43,7 @@ jobs:
     needs: [test-and-build]
     runs-on: ubuntu-latest
 
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/rc'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,11 +57,6 @@ jobs:
 
       - run: npm ci
       - run: npm run build
-
-      # - name: Publish to npm
-      #   run: npm publish --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Run semantic-release
         run: npx semantic-release
