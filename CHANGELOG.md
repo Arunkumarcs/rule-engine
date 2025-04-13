@@ -1,3 +1,10 @@
+# [1.0.0-dev.2](https://github.com/Arunkumarcs/rule-engine/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2025-04-13)
+
+
+### Bug Fixes
+
+* release ([#40](https://github.com/Arunkumarcs/rule-engine/issues/40)) ([0b0e90d](https://github.com/Arunkumarcs/rule-engine/commit/0b0e90d9c0d245cf8078f8e55d36f9869b6dd094))
+
 # 1.0.0-dev.1 (2025-04-13)
 
 
