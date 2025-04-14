@@ -1,3 +1,15 @@
+# [1.6.0-dev.1](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.2-dev.2...v1.6.0-dev.1) (2025-04-14)
+
+
+### Bug Fixes
+
+* badges ([#47](https://github.com/Arunkumarcs/rule-engine/issues/47)) ([44e8ff9](https://github.com/Arunkumarcs/rule-engine/commit/44e8ff9fa626f0d3654a07ade9f0a671c1b96a8b))
+
+
+### Features
+
+* initiate replace memorixe ([#48](https://github.com/Arunkumarcs/rule-engine/issues/48)) ([11fa098](https://github.com/Arunkumarcs/rule-engine/commit/11fa098b9b4219d497e2092101549cffc8214043))
+
 ## [1.5.2-dev.3](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.2-dev.2...v1.5.2-dev.3) (2025-04-14)
 
 
