@@ -32,7 +32,7 @@ jobs:
           registry-url: "https://registry.npmjs.org/"
 
       - run: npm ci
-      # - run: npm run test
+      - run: npm run test
 
   publish:
     permissions:
@@ -65,10 +65,12 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+
       - name: Setup Git identity
         run: |
           git config user.name "semantic-release-bot"
           git config user.email "semantic-release@github.com"
+
       - name: Run semantic-release
         run: npx semantic-release
         env:
