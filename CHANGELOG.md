@@ -1,3 +1,5 @@
+# [2.0.0-dev.1](https://github.com/Arunkumarcs/rule-engine/compare/v1.6.0-dev.1...v2.0.0-dev.1) (2025-04-14)
+
 # [1.6.0-dev.1](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.2-dev.2...v1.6.0-dev.1) (2025-04-14)
 
 
