@@ -159,4 +159,4 @@ Operator can also be an async function.
 | feat: add new feature | Minor release |
 | feat!: change function signature | 🚨 Major release |
 | chore: cleanup | No release |
-| refactor: simplify logic<br><br>BREAKING CHANGE: removed old args | 🚨 Major |
+| refactor: simplify logic <br/> BREAKING CHANGE: removed old args | 🚨 Major |
