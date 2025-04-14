@@ -1,3 +1,10 @@
+## [1.5.2-dev.3](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.2-dev.2...v1.5.2-dev.3) (2025-04-14)
+
+
+### Bug Fixes
+
+* badges ([#47](https://github.com/Arunkumarcs/rule-engine/issues/47)) ([44e8ff9](https://github.com/Arunkumarcs/rule-engine/commit/44e8ff9fa626f0d3654a07ade9f0a671c1b96a8b))
+
 ## [1.5.2-dev.2](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.2-dev.1...v1.5.2-dev.2) (2025-04-14)
 
 
