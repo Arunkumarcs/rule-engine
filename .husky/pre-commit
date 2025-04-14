@@ -1,1 +1,2 @@
-npm run test:badges
+# TODO(husky): Reenable this
+npm run test

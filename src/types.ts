@@ -1,42 +1,53 @@
-// Primitive operators
-type Operator =
-  | "==="
-  | "!=="
-  | ">"
-  | ">="
-  | "<"
-  | "<="
-  | "=="
-  | "!="
-  | "like%"
-  | "%like"
-  | "%like%"
-  | string;
+export namespace N_Engine {
+  type Operator =
+    | "==="
+    | "!=="
+    | ">"
+    | ">="
+    | "<"
+    | "<="
+    | "=="
+    | "!="
+    | "like%"
+    | "%like"
+    | "%like%"
+    | "in"
+    | "!in"
+    | "includes"
+    | "!includes";
 
-// Nested group of conditions (supports recursion)
-interface ConditionGroup {
-  all?: Rule[];
-  any?: Rule[];
-}
+  type RuleCallback =
+    | string
+    | number
+    | boolean
+    | object
+    | string[]
+    | number[]
+    | boolean[]
+    | object[]
+    | ((fact: object, name: string) => RuleCallback);
 
-// A rule is either a condition or a group of conditions
-type Rule = RuleCondition | ConditionGroup;
+  export type OperatorCallback = (...arg: any) => Promise<boolean>;
 
-// Full rule engine definition
-interface RuleSet {
-  conditions: ConditionGroup;
-  onSuccess?: () => void;
-  onFail?: () => void;
-}
+  export type ConditionOperation = {
+    path: string;
+    operator: Operator;
+    value: any;
+  };
 
-// Full rule engine definition
-export interface RuleMap {
-  [k: string]: RuleSet;
-}
+  export type ConditionType = ConditionOperation | Condition | string;
 
-// Basic condition
-export interface RuleCondition {
-  path: string;
-  operator: Operator;
-  value: any;
+  export type ConditionAnd = { and: ConditionType[] };
+  export type ConditionOr = { or: ConditionType[] };
+  export type Condition = ConditionAnd | ConditionOr;
+
+  export type Rule = {
+    condition: Condition | string;
+    onSuccess: RuleCallback;
+    onFail: RuleCallback;
+    cache: boolean;
+  };
+  export type NamedRules = Record<string, Rule>;
+  export type NamedConditions = Record<string, Condition>;
+  export type NamedOperators = Record<string, OperatorCallback>;
 }

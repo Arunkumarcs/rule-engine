@@ -1,105 +1,156 @@
-import get from "lodash.get";
-import includes from "lodash.includes";
-import startsWith from "lodash.startswith";
-import endsWith from "lodash.endswith";
-import { RuleMap, RuleCondition } from "./types";
+import { N_Engine } from "./types";
+import memoize from "lodash.memoize";
+import { includes, endsWith, startsWith, get } from "./helper";
 
-export class RuleEngine {
-  private rules: Map<string, any> = new Map();
-  private operators: Map<string, any> = new Map();
-  private defaultOperators: {
-    key: string;
-    val: (a: any, b: any) => Promise<boolean>;
-  }[] = [
-    {
-      key: "%like%",
-      val: (a, b: any) => Promise.resolve(includes(a, b)),
-    },
-    {
-      key: "%like",
-      val: (a, b) => Promise.resolve(endsWith(a, b)),
-    },
-    {
-      key: "like%",
-      val: (a, b) => Promise.resolve(startsWith(a, b)),
-    },
-    {
-      key: "===",
-      val: (a, b) => Promise.resolve(a === b),
-    },
-    {
-      key: "==",
-      val: (a, b) => Promise.resolve(a == b),
-    },
-    {
-      key: "!==",
-      val: (a, b) => Promise.resolve(a !== b),
-    },
-    {
-      key: "!=",
-      val: (a, b) => Promise.resolve(a != b),
-    },
-    {
-      key: ">",
-      val: (a, b) => Promise.resolve(a > b),
-    },
-    {
-      key: ">=",
-      val: (a, b) => Promise.resolve(a >= b),
-    },
-    {
-      key: "<",
-      val: (a, b) => Promise.resolve(a < b),
-    },
-    {
-      key: "<=",
-      val: (a, b) => Promise.resolve(a <= b),
-    },
-    {
-      key: "in",
-      val: (a, b) => Promise.resolve(Array.isArray(a) && a.includes(b)),
-    },
-  ];
+const defaultOperators = {
+  "%like%": async (a: string, b: string) => includes(a, b),
+  "%like": async (a: string, b: string) => endsWith(a, b),
+  "like%": async (a: string, b: string) => startsWith(a, b),
+  "===": async (a: any, b: any) => a === b,
+  "==": async (a: any, b: any) => a == b,
+  "!==": async (a: any, b: any) => a !== b,
+  "!=": async (a: any, b: any) => a != b,
+  ">": async (a: any, b: any) => a > b,
+  ">=": async (a: any, b: any) => a >= b,
+  "<": async (a: any, b: any) => a < b,
+  "<=": async (a: any, b: any) => a <= b,
+  in: async (a: any, b: any[]) => includes(b, a),
+  "!in": async (a: any, b: any[]) => !includes(b, a),
+  includes: async (a: any[], b: any) => includes(a, b),
+};
 
-  constructor(rules: RuleMap | {}) {
-    this.initial(rules);
+class Engine {
+  protected namedRules: Map<string, N_Engine.Rule> = new Map();
+  protected namedConditions: Map<string, N_Engine.Condition> = new Map();
+  protected namedOperators: Map<string, N_Engine.OperatorCallback> = new Map(
+    Object.entries(defaultOperators)
+  );
+
+  get rule() {
+    return Object.fromEntries(this.namedRules);
   }
 
-  private initial(rules: RuleMap) {
-    this.rules = new Map(Object.entries(rules));
-    this.defaultOperators.forEach((op) => this.operators.set(op.key, op.val));
+  get condition() {
+    return Object.fromEntries(this.namedConditions);
   }
 
-  private async evaluateCondition(
-    fact: object,
-    { path, operator, value }: RuleCondition
-  ): Promise<boolean> {
-    const actual = get(fact, path, false);
-    const fn = this.operators.get(operator);
-    return fn ? await fn(actual, value) : Promise.resolve(false);
+  get operator() {
+    return Object.fromEntries(this.namedOperators);
   }
 
-  private eventRuleCallback(fact: object) {
-    return async (cond: any) => {
-      if (cond.all || cond.any) {
-        return this.evaluateRule(fact, cond);
-      } else {
-        return this.evaluateCondition(fact, cond);
+  private add(
+    key: string,
+    data: N_Engine.Rule | N_Engine.Condition | N_Engine.OperatorCallback
+  ) {
+    if ("condition" in data) {
+      if (this.namedRules.has(key)) {
+        throw new Error(`Rule ${key} already exists`);
       }
-    };
+      this.namedRules.set(key, data);
+    } else if ("and" in data || "or" in data) {
+      if (this.namedConditions.has(key)) {
+        throw new Error(`Condition ${key} already exists`);
+      }
+      this.namedConditions.set(key, data);
+    } else if (typeof data === "function") {
+      if (this.namedOperators.has(key)) {
+        throw new Error(`Operator ${key} already exists`);
+      }
+      this.namedOperators.set(key, data);
+    } else {
+      throw new Error(`Invalid data type: ${typeof data}`);
+    }
   }
 
-  private async evaluateRule(fact: object, rule: any): Promise<boolean> {
-    if (rule.all) {
-      return (
-        await Promise.all(rule.all.map(this.eventRuleCallback(fact)))
-      ).every((result) => result);
+  private addLoop(
+    list:
+      | N_Engine.NamedRules
+      | N_Engine.NamedConditions
+      | N_Engine.NamedOperators
+  ) {
+    for (const key in list) {
+      if (Object.prototype.hasOwnProperty.call(list, key)) {
+        this.add(key, list[key]);
+      }
     }
-    if (rule.any) {
+  }
+
+  public addRule(list: N_Engine.NamedRules) {
+    this.addLoop(list);
+  }
+
+  public addCondition(list: N_Engine.NamedConditions) {
+    this.addLoop(list);
+  }
+
+  public addOperator(list: N_Engine.NamedOperators) {
+    this.addLoop(list);
+  }
+
+  protected async doOperation(
+    fact: object,
+    { path, operator, value }: N_Engine.ConditionOperation
+  ): Promise<boolean> {
+    // TODO: optimize
+    const actual = get(fact, path);
+
+    const fn = this.namedOperators.get(operator);
+
+    if (!fn) {
+      throw new Error(`Operator "${operator}" not found`);
+    }
+
+    return fn(actual, value);
+  }
+
+  protected async evaluateConditionOperation(
+    fact: object,
+    cond: N_Engine.ConditionType
+  ) {
+    if (typeof cond === "string" || "and" in cond || "or" in cond) {
+      return this.evaluateRule(fact, cond);
+    } else if ("operator" in cond) {
+      return this.doOperation(fact, cond);
+    }
+  }
+
+  protected guardCondition(
+    condition: object
+  ): condition is N_Engine.ConditionAnd | N_Engine.ConditionOr {
+    return (
+      typeof condition === "object" && ("and" in condition || "or" in condition)
+    );
+  }
+
+  protected async evaluateRule(
+    fact: object,
+    condition: N_Engine.Condition | string
+  ): Promise<boolean> {
+    let namedCondition: unknown;
+    if (typeof condition === "string") {
+      namedCondition = this.namedConditions.get(condition);
+    } else {
+      namedCondition = condition;
+    }
+
+    if (!namedCondition) {
+      throw new Error(`Condition "${condition}" not found`);
+    }
+
+    if (this.guardCondition(namedCondition) && "and" in namedCondition) {
       return (
         await Promise.all(
-          rule.any.map(
-            async (cond: any) => await this.evaluateCondition(fact, cond)
+          namedCondition.and.map(async (cond: N_Engine.ConditionType) =>
+            this.evaluateConditionOperation(fact, cond)
+          )
+        )
+      ).every((result) => result);
+    }
+    if (this.guardCondition(namedCondition) && "or" in namedCondition) {
+      return (
+        await Promise.all(
+          namedCondition.or.map(async (cond: N_Engine.ConditionType) =>
+            this.evaluateConditionOperation(fact, cond)
           )
         )
       ).some((result) => result);
@@ -107,31 +158,46 @@ export class RuleEngine {
     return false;
   }
 
-  public async setOperator(
-    symbol: string,
-    callback: (a: any, b: any) => Promise<boolean>
-  ): Promise<boolean> {
-    if (!this.operators.has(symbol)) {
-      this.operators.set(symbol, callback);
-      return true;
+  protected async cachedRuleEvaluate(ruleName: string, rule: N_Engine.Rule) {
+    const cacheMethod = rule.cache ?? true;
+
+    if (cacheMethod === false) {
+      return this.evaluateRule;
     }
-    return false;
+
+    const methodToCache = this.evaluateRule;
+
+    // TODO: Provision for custom cache key
+    return memoize(
+      methodToCache,
+      (fact: object) => `${ruleName}-${JSON.stringify(fact)}`
+    );
   }
 
-  public async setRule(name: string, rule: object): Promise<boolean> {
-    if (!this.rules.has(name)) {
-      this.rules.set(name, rule);
-      return true;
-    }
-    return false;
-  }
+  public async run(fact: object, ruleName: string) {
+    const rule = this.namedRules.get(ruleName) as N_Engine.Rule;
 
-  public async runRule(fact: object, ruleIndex: string): Promise<any> {
-    const rule = this.rules.get(ruleIndex);
-    const result = await this.evaluateRule(fact, rule.conditions);
+    if (!rule) {
+      throw new Error(`Rule "${ruleName}" not found`);
+    }
+
+    const result = await (
+      await this.cachedRuleEvaluate(ruleName, rule)
+    )(fact, rule.condition);
+
     if (result) {
-      return rule.onSuccess(fact);
+      if (typeof rule.onSuccess === "function") {
+        return rule.onSuccess(fact, ruleName);
+      } else {
+        return rule.onSuccess;
+      }
     }
-    return rule.onFail(fact);
+    if (typeof rule.onFail === "function") {
+      return rule.onFail(fact, ruleName);
+    } else {
+      return rule.onFail;
+    }
   }
 }
+
+export default Engine;
