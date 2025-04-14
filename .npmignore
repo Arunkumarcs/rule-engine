@@ -1,6 +1,5 @@
 .github/
 .husky/
-badges/
 coverage/
 node_modules/
 src/
