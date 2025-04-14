@@ -1,9 +1,6 @@
-import includes from "lodash.includes";
-import endsWith from "lodash.endswith";
-import startsWith from "lodash.startswith";
 import memoize from "lodash.memoize";
 import { N_Engine } from "./types";
-import { JSONPath } from "jsonpath-plus";
+import { includes, endsWith, startsWith, get } from "./helper";
 
 const defaultOperators = {
   "%like%": async (a: string, b: string) => includes(a, b),
@@ -95,12 +92,7 @@ class Engine {
     { path, operator, value }: N_Engine.ConditionOperation
   ): Promise<boolean> {
     // TODO: optimize
-    const actual = JSONPath({
-      path,
-      json: fact,
-      resultType: "value",
-      ignoreEvalErrors: true,
-    });
+    const actual = get(fact, path);
 
     const fn = this.namedOperators.get(operator);
 
