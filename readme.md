@@ -151,10 +151,12 @@ Operator can also be an async function.
 
 [MIT](./LICENSE)
 
-### Badges
+## 🎯 Examples for commit message
 
-- https://badge.fury.io/for/js/json-rules-engine
-- https://packagephobia.com/result?p=json-rules-engine
-- https://shields.io/docs
-- https://bundlephobia.com/package/@arunkumar_h/rule-engine
-- https://bundlephobia.com/package/@arunkumar_h/rule-engine@1.2.4
+| Commit Message | Result |
+| --- | --- |
+| fix: bug fix | Patch release |
+| feat: add new feature | Minor release |
+| feat!: change function signature | 🚨 Major release |
+| chore: cleanup | No release |
+| refactor: simplify logic<br><br>BREAKING CHANGE: removed old args | 🚨 Major |
