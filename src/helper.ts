@@ -1,5 +1,21 @@
 import { JSONPath } from "jsonpath-plus";
 
+export function memoize(
+  fn: (...args: any[]) => any,
+  resolver = (...args: any[]) => JSON.stringify(args)
+) {
+  const cache = new Map();
+
+  return function (...args: any[]) {
+    const key = resolver(...args);
+    if (cache.has(key)) return cache.get(key);
+
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
+
 export function includes(collection: unknown, value: any) {
   if (typeof collection === "string") {
     return collection.includes(value);
