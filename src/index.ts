@@ -1,7 +1,6 @@
 import includes from "lodash.includes";
 import endsWith from "lodash.endswith";
 import startsWith from "lodash.startswith";
-import get from "lodash.get";
 import memoize from "lodash.memoize";
 import { N_Engine } from "./types";
 import { JSONPath } from "jsonpath-plus";
@@ -168,7 +167,7 @@ class Engine {
   }
 
   protected async cachedRuleEvaluate(ruleName: string, rule: N_Engine.Rule) {
-    const cacheMethod = get(rule, "cache", true);
+    const cacheMethod = rule.cache ?? true;
 
     if (cacheMethod === false) {
       return this.evaluateRule;
@@ -177,13 +176,6 @@ class Engine {
     const methodToCache = this.evaluateRule;
 
     // TODO: Provision for custom cache key
-    if (typeof cacheMethod === "string") {
-      return memoize(
-        methodToCache,
-        (fact: object) => `${ruleName}-${get(fact, cacheMethod)}`
-      );
-    }
-
     return memoize(
       methodToCache,
       (fact: object) => `${ruleName}-${JSON.stringify(fact)}`
