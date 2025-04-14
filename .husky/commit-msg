@@ -1,6 +1,0 @@
-# Don't lint commits in CI
-# if [ "$CI" = "true" ]; then
-#   exit 0
-# fi
-# 
-# npm run commitlint ${1}
