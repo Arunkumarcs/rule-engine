@@ -1,3 +1,10 @@
+## [1.5.2-dev.2](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.2-dev.1...v1.5.2-dev.2) (2025-04-14)
+
+
+### Bug Fixes
+
+* reset test ([#45](https://github.com/Arunkumarcs/rule-engine/issues/45)) ([4cd7dce](https://github.com/Arunkumarcs/rule-engine/commit/4cd7dce7a1d40b42a72d223d01859495cb0e48e3))
+
 ## [1.5.2-dev.1](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.1...v1.5.2-dev.1) (2025-04-13)
 
 
