@@ -1,5 +1,5 @@
-import memoize from "lodash.memoize";
 import { N_Engine } from "./types";
+import memoize from "lodash.memoize";
 import { includes, endsWith, startsWith, get } from "./helper";
 
 const defaultOperators = {
