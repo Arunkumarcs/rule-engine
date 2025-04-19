@@ -6,10 +6,10 @@
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/@arunkumar_h/rule-engine)](https://bundlephobia.com/package/@arunkumar_h/rule-engine)
 [![Install size](https://packagephobia.com/badge?p=@arunkumar_h/rule-engine)](https://packagephobia.com/result?p=@arunkumar_h/rule-engine)
 
-[![badge-branches](badges/badge-branches.svg)](badges/badge-branches.svg)
+<!-- [![badge-branches](badges/badge-branches.svg)](badges/badge-branches.svg)
 [![badge-functions](badges/badge-functions.svg)](badges/badge-functions.svg)
 [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
-[![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
+[![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg) -->
 
 > A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
 
@@ -29,6 +29,7 @@ yarn add @arunkumar_h/rule-engine
 - 🔧 Custom operators and facts
 - 📜 Written in TypeScript, fully typed
 - 🚀 Lightweight
+- 🔎 Built-in [JMESPath](https://jmespath.org/) support for powerful data querying
 
 ### Default Operators
 

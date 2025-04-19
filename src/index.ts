@@ -1,23 +1,14 @@
 import { N_Engine } from "./types";
-import memoize from "lodash.memoize";
-import { includes, endsWith, startsWith, get } from "./helper";
+import { get, defaultOperators, memoize, typeGuardCondition } from "./helper";
 
-const defaultOperators = {
-  "%like%": async (a: string, b: string) => includes(a, b),
-  "%like": async (a: string, b: string) => endsWith(a, b),
-  "like%": async (a: string, b: string) => startsWith(a, b),
-  "===": async (a: any, b: any) => a === b,
-  "==": async (a: any, b: any) => a == b,
-  "!==": async (a: any, b: any) => a !== b,
-  "!=": async (a: any, b: any) => a != b,
-  ">": async (a: any, b: any) => a > b,
-  ">=": async (a: any, b: any) => a >= b,
-  "<": async (a: any, b: any) => a < b,
-  "<=": async (a: any, b: any) => a <= b,
-  in: async (a: any, b: any[]) => includes(b, a),
-  "!in": async (a: any, b: any[]) => !includes(b, a),
-  includes: async (a: any[], b: any) => includes(a, b),
-};
+export {
+  includes,
+  endsWith,
+  startsWith,
+  get,
+  memoize,
+  typeGuardCondition,
+} from "./helper";
 
 class Engine {
   protected namedRules: Map<string, N_Engine.Rule> = new Map();
@@ -87,7 +78,7 @@ class Engine {
     this.addLoop(list);
   }
 
-  protected async doOperation(
+  protected async executeOperation(
     fact: object,
     { path, operator, value }: N_Engine.ConditionOperation
   ): Promise<boolean> {
@@ -103,23 +94,15 @@ class Engine {
     return fn(actual, value);
   }
 
-  protected async evaluateConditionOperation(
+  protected async executeConditionOperation(
     fact: object,
     cond: N_Engine.ConditionType
   ) {
     if (typeof cond === "string" || "and" in cond || "or" in cond) {
       return this.evaluateRule(fact, cond);
     } else if ("operator" in cond) {
-      return this.doOperation(fact, cond);
+      return this.executeOperation(fact, cond);
     }
-  }
-
-  protected guardCondition(
-    condition: object
-  ): condition is N_Engine.ConditionAnd | N_Engine.ConditionOr {
-    return (
-      typeof condition === "object" && ("and" in condition || "or" in condition)
-    );
   }
 
   protected async evaluateRule(
@@ -137,20 +120,23 @@ class Engine {
       throw new Error(`Condition "${condition}" not found`);
     }
 
-    if (this.guardCondition(namedCondition) && "and" in namedCondition) {
+    if (!typeGuardCondition(namedCondition)) {
+      return false;
+    }
+    if ("and" in namedCondition) {
       return (
         await Promise.all(
           namedCondition.and.map(async (cond: N_Engine.ConditionType) =>
-            this.evaluateConditionOperation(fact, cond)
+            this.executeConditionOperation(fact, cond)
           )
         )
       ).every((result) => result);
     }
-    if (this.guardCondition(namedCondition) && "or" in namedCondition) {
+    if ("or" in namedCondition) {
       return (
         await Promise.all(
           namedCondition.or.map(async (cond: N_Engine.ConditionType) =>
-            this.evaluateConditionOperation(fact, cond)
+            this.executeConditionOperation(fact, cond)
           )
         )
       ).some((result) => result);
@@ -158,18 +144,16 @@ class Engine {
     return false;
   }
 
-  protected async cachedRuleEvaluate(ruleName: string, rule: N_Engine.Rule) {
+  protected async cachedEvaluateRule(ruleName: string, rule: N_Engine.Rule) {
     const cacheMethod = rule.cache ?? true;
 
     if (cacheMethod === false) {
       return this.evaluateRule;
     }
 
-    const methodToCache = this.evaluateRule;
-
     // TODO: Provision for custom cache key
     return memoize(
-      methodToCache,
+      this.evaluateRule,
       (fact: object) => `${ruleName}-${JSON.stringify(fact)}`
     );
   }
@@ -181,9 +165,10 @@ class Engine {
       throw new Error(`Rule "${ruleName}" not found`);
     }
 
-    const result = await (
-      await this.cachedRuleEvaluate(ruleName, rule)
-    )(fact, rule.condition);
+    const result = await(await this.cachedEvaluateRule(ruleName, rule))(
+      fact,
+      rule.condition
+    );
 
     if (result) {
       if (typeof rule.onSuccess === "function") {
