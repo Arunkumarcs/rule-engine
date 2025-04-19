@@ -151,13 +151,3 @@ Operator can also be an async function.
 ## 📄 License
 
 [MIT](./LICENSE)
-
-## 🎯 Examples for commit message
-
-| Commit Message | Result |
-| --- | --- |
-| fix: bug fix | Patch release |
-| feat: add new feature | Minor release |
-| feat!: change function signature | 🚨 Major release |
-| chore: cleanup | No release |
-| refactor: simplify logic <br/> BREAKING CHANGE: removed old args | 🚨 Major |
