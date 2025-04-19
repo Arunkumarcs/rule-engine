@@ -1,6 +1,6 @@
 ✔ Add support for `https://www.npmjs.com/package/jsonpath-plus` @done(25-04-14 16:41)
+✔ commitizen @done(25-04-19 08:48)
 ☐ Add support for `https://www.npmjs.com/package/hash-it`
-☐ commitizen
 
 ☐ Badges
     - https://badge.fury.io/for/js/json-rules-engine

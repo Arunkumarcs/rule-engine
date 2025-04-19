@@ -2,10 +2,11 @@
   "name": "@arunkumar_h/rule-engine",
   "version": "2.0.0-dev.2",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE",
+    "package.json"
   ],
   "repository": {
     "type": "git",
@@ -22,8 +23,8 @@
     "test": "jest",
     "test:coverage": "npm test --coverage",
     "test:badges": "npm run test:coverage  && jest-coverage-badges output ./badges",
-    "build": "tsc",
-    "tsup_build": "tsup src/index.ts --dts --format cjs --out-dir dist",
+    "build:tsc": "tsc",
+    "build": "tsup src/index.ts --format esm,cjs --dts --out-dir dist",
     "prepare": "husky install",
     "semantic-release": "semantic-release",
     "commit": "cz"
@@ -34,7 +35,7 @@
     "@semantic-release/github": "^11.0.1",
     "@semantic-release/npm": "^12.0.1",
     "@types/jest": "^29.5.14",
-    "@types/lodash.memoize": "^4.1.9",
+    "@types/jmespath": "^0.15.2",
     "commitizen": "^4.3.1",
     "conventional-changelog-conventionalcommits": "^8.0.0",
     "cz-conventional-changelog": "^3.3.0",
@@ -48,7 +49,15 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "jsonpath-plus": "^10.3.0",
-    "lodash.memoize": "^4.1.2"
+    "jmespath": "^0.16.0"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
   }
 }

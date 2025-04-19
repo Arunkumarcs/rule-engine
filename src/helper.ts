@@ -1,8 +1,18 @@
-import { JSONPath } from "jsonpath-plus";
+import { search } from "jmespath";
+import { N_Engine } from "./types";
 
+export function typeGuardCondition(
+  condition: object
+): condition is N_Engine.ConditionAnd | N_Engine.ConditionOr {
+  return (
+    typeof condition === "object" && ("and" in condition || "or" in condition)
+  );
+}
+  
 export function memoize(
   fn: (...args: any[]) => any,
-  resolver = (...args: any[]) => JSON.stringify(args)
+  resolver: (...args: any[]) => string = (...args: any[]) =>
+    JSON.stringify(args)
 ) {
   const cache = new Map();
 
@@ -51,10 +61,22 @@ export function startsWith(str: string, target: string, position?: number) {
 }
 
 export function get(fact: object, path: string) {
-  return JSONPath({
-    path,
-    json: fact,
-    resultType: "value",
-    ignoreEvalErrors: true,
-  });
+  return search(fact, path);
 }
+
+export const defaultOperators = {
+  "%like%": async (a: string, b: string) => includes(a, b),
+  "%like": async (a: string, b: string) => endsWith(a, b),
+  "like%": async (a: string, b: string) => startsWith(a, b),
+  "===": async (a: any, b: any) => a === b,
+  "==": async (a: any, b: any) => a == b,
+  "!==": async (a: any, b: any) => a !== b,
+  "!=": async (a: any, b: any) => a != b,
+  ">": async (a: any, b: any) => a > b,
+  ">=": async (a: any, b: any) => a >= b,
+  "<": async (a: any, b: any) => a < b,
+  "<=": async (a: any, b: any) => a <= b,
+  in: async (a: any, b: any[]) => includes(b, a),
+  "!in": async (a: any, b: any[]) => !includes(b, a),
+  includes: async (a: any[], b: any) => includes(a, b),
+};
