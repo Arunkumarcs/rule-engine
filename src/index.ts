@@ -18,14 +18,14 @@ class Engine {
   protected namedOperators: Map<string, N_Engine.OperatorCallback> = new Map(
     Object.entries(defaultOperators)
   );
-  protected cache: LRUCache<string, boolean> | null;
+  protected cache: LRUCache<string, boolean> | null = null;
   protected cacheOption: LRUCache.Options<string, boolean, unknown> = {
     max: 500,
-    maxSize: 5000,
     ttl: 1000 * 60 * 5,
     allowStale: false,
     updateAgeOnGet: false,
     updateAgeOnHas: false,
+    // maxSize: 5000,
 
     // for use with tracking overall storage size
     // sizeCalculation: (value, key) => {
@@ -159,28 +159,44 @@ class Engine {
       throw new Error(`Condition "${condition}" not found`);
     }
 
-    if (!typeGuardCondition(namedCondition)) {
-      return false;
-    }
-    if ("and" in namedCondition) {
-      return (
-        await Promise.all(
-          namedCondition.and.map(async (cond: N_Engine.ConditionType) =>
-            this.executeConditionOperation(fact, cond)
+    if (typeGuardCondition(namedCondition)) {
+      if ("and" in namedCondition) {
+        return (
+          await Promise.all(
+            namedCondition.and.map(async (cond: N_Engine.ConditionType) =>
+              this.executeConditionOperation(fact, cond)
+            )
           )
-        )
-      ).every((result) => result);
-    }
-    if ("or" in namedCondition) {
-      return (
-        await Promise.all(
-          namedCondition.or.map(async (cond: N_Engine.ConditionType) =>
-            this.executeConditionOperation(fact, cond)
+        ).every((result) => result);
+      } else {
+        return (
+          await Promise.all(
+            namedCondition.or.map(async (cond: N_Engine.ConditionType) =>
+              this.executeConditionOperation(fact, cond)
+            )
           )
-        )
-      ).some((result) => result);
+        ).some((result) => result);
+      }
     }
-    return false;
+    throw new Error(`Condition "${JSON.stringify(condition)}" is not valid`);
+  }
+
+  protected async memoize(resolver: (...args: any[]) => string) {
+    const self = this;
+    return async function (...args: any[]) {
+      const key = await resolver(...args);
+
+      if (self.cache && self.cache.has(key)) {
+        return self.cache.get(key);
+      }
+
+      const result = await self.evaluateRule(args[0], args[1]);
+
+      if (self.cache) {
+        self.cache.set(key, result);
+      }
+      return result;
+    };
   }
 
   protected async cachedEvaluateRule(ruleName: string, rule: N_Engine.Rule) {
@@ -190,14 +206,8 @@ class Engine {
       return this.evaluateRule;
     }
 
-    if (!this.cache) {
-      throw new Error("Cache is not initialized");
-    }
-
     // TODO: Provision for custom cache key
-    return memoize(
-      this.cache,
-      this.evaluateRule,
+    return this.memoize(
       (fact: object) => `${ruleName}-${JSON.stringify(fact)}`
     );
   }
@@ -208,10 +218,11 @@ class Engine {
     if (!rule) {
       throw new Error(`Rule "${ruleName}" not found`);
     }
-
-    const result = await (
-      await this.cachedEvaluateRule(ruleName, rule)
-    )(fact, rule.condition);
+    const resultCallback = await this.cachedEvaluateRule(ruleName, rule);
+    const result = await Reflect.apply(resultCallback, this, [
+      fact,
+      rule.condition,
+    ]);
 
     if (result) {
       if (typeof rule.onSuccess === "function") {

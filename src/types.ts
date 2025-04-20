@@ -14,7 +14,8 @@ export namespace N_Engine {
     | "in"
     | "!in"
     | "includes"
-    | "!includes";
+    | "!includes"
+    | string;
 
   type RuleCallback =
     | string
@@ -45,7 +46,7 @@ export namespace N_Engine {
     condition: Condition | string;
     onSuccess: RuleCallback;
     onFail: RuleCallback;
-    cache: boolean;
+    cache?: boolean;
   };
   export type NamedRules = Record<string, Rule>;
   export type NamedConditions = Record<string, Condition>;
