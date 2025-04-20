@@ -32,7 +32,7 @@ yarn add @arunkumar_h/rule-engine
 - 🔎 Native [JMESPath](https://jmespath.org/)  support for data querying
 - 🧰 Built-in caching using [`lru-cache`](https://isaacs.github.io/node-lru-cache/)  for better performance
 
-### ⚙️ Default Operators
+## ⚙️ Default Operators
 
 The following operators are available by default:
 
@@ -54,7 +54,7 @@ The following operators are available by default:
 | includes | Array includes value |
 | !includes | Array does not include value |
 
-### 🔨 Basic Usage
+## 🔨 Basic Usage
 
 - `condition` This containes `and` and `or` as main block.
 - `onSuccess` value that will be returned or function that will be invoked if the condition is satisfied.
