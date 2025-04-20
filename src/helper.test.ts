@@ -20,8 +20,8 @@ function getValidInputsForOperator(operator: keyof typeof defaultOperators) {
       ];
     case "%like":
       return [
-        ["hello world", "world"],
-        ["hello world", "ld"],
+        ["hello worlds", "worlds"],
+        ["hello worlds", "lds"],
       ];
     case "like%":
       return [
@@ -45,8 +45,8 @@ function getValidInputsForOperator(operator: keyof typeof defaultOperators) {
       ];
     case "!=":
       return [
-        [1, 2],
-        ["hello", "world"],
+        [2, 3],
+        ["hellod", "worldd"],
       ];
     case ">":
       return [
