@@ -184,7 +184,7 @@ class Engine {
   protected async memoize(resolver: (...args: any[]) => string) {
     const self = this;
     return async function (...args: any[]) {
-      const key = await resolver(...args);
+      const key = resolver(...args);
 
       if (self.cache && self.cache.has(key)) {
         return self.cache.get(key);
