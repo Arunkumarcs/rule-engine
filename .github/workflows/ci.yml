@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev
+      # - dev
   pull_request:
     branches:
       - "*"
@@ -40,11 +40,11 @@ jobs:
     needs: [test-and-build]
     runs-on: ubuntu-latest
 
+    # github.ref == 'refs/heads/dev' ||
     if: |
       github.event_name == 'push' &&
       (
-        github.ref == 'refs/heads/main' ||
-        github.ref == 'refs/heads/dev'
+        github.ref == 'refs/heads/main'
       )
     steps:
       - uses: actions/checkout@v4
