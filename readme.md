@@ -1,4 +1,5 @@
 # @arunkumar_h/rule-engine
+A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
 
 [![NPM Version](https://img.shields.io/npm/v/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
 [![NPM Downloads](https://img.shields.io/npm/dm/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
@@ -11,20 +12,17 @@
 [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
 [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
 
-> A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
 
 ## 📦 Installation
-
 ```bash
 npm install @arunkumar_h/rule-engine
 ```
-
 ```bash
 yarn add @arunkumar_h/rule-engine
 ```
 
-## 🧠 Features
 
+## 🧠 Features
 - ✅ Logical condition support (and, or, nested expressions)
 - 🔧 Custom operators and named conditions
 - 📜 Fully typed with TypeScript
@@ -32,12 +30,28 @@ yarn add @arunkumar_h/rule-engine
 - 🔎 Native [JMESPath](https://jmespath.org/)  support for data querying
 - 🧰 Built-in caching using [`lru-cache`](https://isaacs.github.io/node-lru-cache/)  for better performance
 
-## ⚙️ Default Operators
 
+| Feature / Capability | @arunkumar_h/rule-engine |
+| --- | --- |
+| ✅ Written in TypeScript | ✅ Native TypeScript with full type safety |
+| ⚙️ Custom Operators | ✅ Built-in support, sync or async | 
+| 🧠 Named Conditions | ✅ Supports reusable named conditions | 
+| 🧱 Nested Logical Trees | ✅ Fully supported (and, or, deeply nested) |
+| 🔍 Data Query Language | ✅ Built-in JMESPath support | 
+| 🚀 Performance Optimizations | ✅ Rule-level cache with lru-cache |
+| 🧰 Extensibility | ✅ Add custom operators, conditions dynamically |
+| ⚖️ Lightweight | ✅ Small and focused build | 
+| 🧪 Testing Coverage Ready | ✅ Easy to unit test each rule block |
+| 🔁 Dynamic Rule Loading | ✅ Add/modify rules at runtime | 
+| 🔄 Async Support | ✅ Full async engine and operators |
+| 📦 Modern Packaging | ✅ ESM + CJS + .d.ts types out of the box |
+
+
+## ⚙️ Default Operators
 The following operators are available by default:
 
 | Operator | Description |
-| --- | --- |
+| ------ | ------ |
 | === | Strict equality |
 | !== | Strict inequality |
 | == | Loose equality |
@@ -54,8 +68,8 @@ The following operators are available by default:
 | includes | Array includes value |
 | !includes | Array does not include value |
 
-## 🔨 Basic Usage
 
+## 🔨 Basic Usage
 - `condition` This containes `and` and `or` as main block.
 - `onSuccess` value that will be returned or function that will be invoked if the condition is satisfied.
 - `onFail` value that will be returned or function that will be invoked if the condition fails.
@@ -94,8 +108,31 @@ engine.addRule(rule);
 const fact = {age: 16, skills: ["ts", "php"], language: "tamil"}; // Your data to be validated 
 const result = await engineObj.run(fact, "testRule");
 ```
-## 🔍 API Overview
 
+
+## 🔧 Custom Operator Example
+```javascript
+engine.addOperator({
+  isEven: (factValue) => factValue % 2 === 0,
+});
+
+const rule = {
+  evenCheck: {
+    condition: {
+      and: [
+        { path: "number", operator: "isEven" },
+      ],
+    },
+    onSuccess: "Number is even",
+    onFail: "Number is odd",
+  },
+};
+
+const result = await engine.run({ number: 8 }, "evenCheck");
+```
+
+
+## 🔍 API Overview
 ```mermaid
 flowchart TB
     Rule --> onSuccess
@@ -105,7 +142,6 @@ flowchart TB
 ```
 
 ### Engine API
-
 ```javascript
 let engine = new Engine() 
 ```
@@ -125,7 +161,6 @@ run(fact, ruleName)
 
 
 ## ⚡ Advanced Usage
-
 - Adding named conditions.
 - Adding named operators.
 - Rule wise cache disabling.
@@ -170,26 +205,6 @@ const fact = {age: 16, skills: ["ts", "php"], language: "tamil"}; // Your data t
 const result = await engineObj.run(fact, "testRule");
 ```
 
-## 🔧 Custom Operator Example
-```javascript
-engine.addOperator({
-  isEven: (factValue) => factValue % 2 === 0,
-});
-
-const rule = {
-  evenCheck: {
-    condition: {
-      and: [
-        { path: "number", operator: "isEven" },
-      ],
-    },
-    onSuccess: "Number is even",
-    onFail: "Number is odd",
-  },
-};
-
-const result = await engine.run({ number: 8 }, "evenCheck");
-```
 
 ## 🧪 Test Coverage
 Badges above represent live coverage stats for:
