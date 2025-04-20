@@ -1,3 +1,21 @@
+# [2.0.0](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.1...v2.0.0) (2025-04-20)
+
+
+### Bug Fixes
+
+* **change build strategy:** change build strategy ([d894005](https://github.com/Arunkumarcs/rule-engine/commit/d894005c9824c1421610eba2e648398801c8d7a8))
+
+
+### Code Refactoring
+
+* **readme & unittest:** readme & unit test ([dd73cc0](https://github.com/Arunkumarcs/rule-engine/commit/dd73cc0bf709e73ea21b003ce50fa466e00c72fb))
+
+
+### BREAKING CHANGES
+
+* **readme & unittest:** Updated rule engine with - 🔎 Native [JMESPath](https://jmespath.org/)  support for
+data querying
+
 # [2.0.0-dev.2](https://github.com/Arunkumarcs/rule-engine/compare/v2.0.0-dev.1...v2.0.0-dev.2) (2025-04-14)
 
 
