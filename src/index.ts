@@ -186,7 +186,7 @@ class Engine {
     return async function (...args: any[]) {
       const key = resolver(...args);
 
-      if (self.cache && self.cache.has(key)) {
+      if (self.cache?.has(key)) {
         return self.cache.get(key);
       }
 
