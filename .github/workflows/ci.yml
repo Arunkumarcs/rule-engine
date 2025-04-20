@@ -38,8 +38,7 @@ jobs:
       packages: write
     needs: [test-and-build]
     runs-on: ubuntu-latest
-
-    # github.ref == 'refs/heads/dev' ||
+    
     if: |
       github.event_name == 'push' &&
       (
