@@ -23,8 +23,8 @@
     "test": "jest",
     "test:coverage": "npm test --coverage",
     "test:badges": "npm run test:coverage  && jest-coverage-badges output ./badges",
-    "build:tsc": "tsc",
-    "build": "tsup src/index.ts --format esm,cjs --dts --out-dir dist",
+    "build": "tsc",
+    "build:tsup": "tsup src/index.ts --format esm,cjs --dts --out-dir dist",
     "prepare": "husky install",
     "semantic-release": "semantic-release",
     "commit": "cz"
