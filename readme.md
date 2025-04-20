@@ -25,138 +25,181 @@ yarn add @arunkumar_h/rule-engine
 
 ## 🧠 Features
 
-- ✅ Supports `and`, `or`, and nested logical conditions
-- 🔧 Custom operators and facts
-- 📜 Written in TypeScript, fully typed
-- 🚀 Lightweight
+- ✅ Logical condition support (and, or, nested expressions)
+- 🔧 Custom operators and named conditions
+- 📜 Fully typed with TypeScript
+- 🚀 Lightweight and dependency-aware
+- 🔎 Native [JMESPath](https://jmespath.org/)  support for data querying
+- 🧰 Built-in caching using [`lru-cache`](https://isaacs.github.io/node-lru-cache/)  for better performance
 
-### Default Operators
+### ⚙️ Default Operators
 
 The following operators are available by default:
 
-- `===`: Strict equality check
-- `!==`: Strict inequality check
-- `>`: Greater than
-- `>=`: Greater than or equal to
-- `<`: Less than
-- `<=`: Less than or equal to
-- `==`: Loose equality check
-- `!=`: Loose inequality check
-- `like%`: Ends with
-- `%like`: Starts with
-- `%like%`: Includes
-- `in`: Value is in the given array
-- `!in`: Value is not in the given array
-- `includes`: Value includes the given value
-- `!includes`: Value does not include the given value
+| Operator | Description |
+| --- | --- |
+| === | Strict equality |
+| !== | Strict inequality |
+| == | Loose equality |
+| != | Loose inequality |
+| > | Greater than |
+| >= | Greater than or equal to |
+| < | Less than |
+| <= | Less than or equal to |
+| %like | Starts with |
+| like% | Ends with |
+| %like% | Contains |
+| in | Value is in the array |
+| !in | Value is not in the array |
+| includes | Array includes value |
+| !includes | Array does not include value |
 
-### Adding Rule
+### 🔨 Basic Usage
 
-- `name` identifies the name of the rule. The name should always be unique. A single engine cannot have the same rule added more than once.
 - `condition` This containes `and` and `or` as main block.
 - `onSuccess` value that will be returned or function that will be invoked if the condition is satisfied.
 - `onFail` value that will be returned or function that will be invoked if the condition fails.
+- `cache` as default this will be set to `true` and can be disabled for rule wise `false`
 
 ```javascript
 import { Engine } from "@arunkumar_h/rule-engine";
 
 const engineObj = new Engine();
 const rule = {
-  name: "testRule",
-  condition: {
-    and: [
-      { path: "age", operator: "!==", value: 10 },
-      {
-        and: [
-          { path: "age", operator: ">", value: 15 },
-          {
-            or: [
-              { path: "age", operator: "!==", value: 30 },
-              { path: "skills", operator: "includes", value: "ts" },
-            ],
-          },
-        ],
-      },
-      { path: "language", operator: "in", value: ["tamil", "english"] },
-    ],
-  },
-  onSuccess: () => "Success", // onSuccess: { id: 23 }
-  onFail: () => "Fail", // onFail: "Error"
-  cache: false,
+  testRule: {
+    condition: {
+      and: [
+        { path: "age", operator: "!==", value: 10 },
+        {
+          and: [
+            { path: "age", operator: ">", value: 15 },
+            {
+              or: [
+                { path: "age", operator: "!==", value: 30 },
+                { path: "skills", operator: "includes", value: "ts" },
+              ],
+            },
+          ],
+        },
+        { path: "language", operator: "in", value: ["tamil", "english"] },
+      ],
+    },
+    onSuccess: (fact, ruleName) => "Success", // onSuccess: { id: 23 }
+    onFail: (fact, ruleName) => "Fail", // onFail: "Error"
+    cache: false, // default will be true
+  }
 };
 engine.addRule(rule);
-```
 
-```javascript
-import { Engine } from "@arunkumar_h/rule-engine";
-const engineObj = new Engine();
-const condition1 = {
-  name: "condition1",
-  condition: {
-    and: [
-      { path: "age", operator: "!==", value: 10 },
-      {
-        and: [
-          { path: "age", operator: ">", value: 15 },
-          {
-            or: [
-              { path: "age", operator: "!==", value: 30 },
-              { path: "skills", operator: "includes", value: "ts" },
-            ],
-          },
-        ],
-      },
-      { path: "language", operator: "in", value: ["tamil", "english"] },
-    ],
-  },
-};
-const rule = {
-  name: "testRule",
-  condition: "condition1",
-  onSuccess: () => "Success",
-  onFail: () => "Fail",
-};
-engine.addRule(rule);
-engine.addCondition(condition1);
+const fact = {age: 16, skills: ["ts", "php"], language: "tamil"}; // Your data to be validated 
+const result = await engineObj.run(fact, "testRule");
 ```
-
-## 📘 API
+## 🔍 API Overview
 
 ```mermaid
-flowchart LR
-    Rule --> Condition --> Operator
+flowchart TB
+    Rule --> onSuccess
+    Rule --> onFail
+    Rule --> Condition --> AND --> Operation
+    Condition --> OR --> Operation
 ```
 
-#### `let engine = new Engine()`
+### Engine API
 
-Creates a new instance of the RuleEngine.
+```javascript
+let engine = new Engine() 
+```
 
-#### `engine.addRule(namedRule)` or `engine.addRule([namedRule[0], namedRule[1]....])`
+addRule({ rule1, rule2, ... })
+- Add named rules dynamically.
 
-Provision to add named rules to engine dynamically.
+addCondition({ condition1, condition2, ... })
+- Add reusable named conditions.
+- Conditions can reference other named conditions.
 
-#### `engine.addCondition(nammedCondition)` or `engine.addCondition([nammedCondition[0], nammedCondition[1]....])`
+addOperator({ customOperator1, customOperator2, ... })
+- Add custom (sync or async) operators.
 
-Provision to add new condition to engine dynamically.
-Condition can invoke another namedCondition.
+run(fact, ruleName)
+- Executes a given rule against the provided fact
 
-#### `engine.addOperator(nammedOperator)` or `engine.addOperator([nammedOperator[0], nammedOperator[1]....])`
 
-Provision to add new operator to engine dynamically.
-Operator can also be an async function.
+## ⚡ Advanced Usage
 
-## 🛠️ Advanced Usage
+- Adding named conditions.
+- Adding named operators.
+- Rule wise cache disabling.
+
+```javascript
+import { Engine } from "@arunkumar_h/rule-engine";
+
+const engineObj = new Engine();
+
+const condition1 = {
+  condition1: {
+    and: [
+      { path: "age", operator: "!==", value: 10 },
+      {
+        and: [
+          { path: "age", operator: ">", value: 15 },
+          {
+            or: [
+              { path: "age", operator: "!==", value: 30 },
+              { path: "skills", operator: "includes", value: "ts" },
+            ],
+          },
+        ],
+      },
+      { path: "language", operator: "in", value: ["tamil", "english"] },
+    ],
+  }
+};
+engine.addCondition(condition1);  // adding named condition
+
+const rule = {
+  testRule: {
+    condition: "condition1",  // Using named condition
+    onSuccess: "Success",  //  can be a function or a data
+    onFail:  "Fail", //  can be a function or a data
+    cache: false  // disable cache for this rule 
+  }
+};
+engine.addRule(rule);
+
+const fact = {age: 16, skills: ["ts", "php"], language: "tamil"}; // Your data to be validated 
+const result = await engineObj.run(fact, "testRule");
+```
+
+## 🔧 Custom Operator Example
+```javascript
+engine.addOperator({
+  isEven: (factValue) => factValue % 2 === 0,
+});
+
+const rule = {
+  evenCheck: {
+    condition: {
+      and: [
+        { path: "number", operator: "isEven" },
+      ],
+    },
+    onSuccess: "Number is even",
+    onFail: "Number is odd",
+  },
+};
+
+const result = await engine.run({ number: 8 }, "evenCheck");
+```
+
+## 🧪 Test Coverage
+Badges above represent live coverage stats for:
+
+- [![badge-branches](badges/badge-branches.svg)](badges/badge-branches.svg)
+- [![badge-functions](badges/badge-functions.svg)](badges/badge-functions.svg)
+- [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
+- [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
+
 
 ## 📄 License
 
 [MIT](./LICENSE)
-
-## 🎯 Examples for commit message
-
-| Commit Message | Result |
-| --- | --- |
-| fix: bug fix | Patch release |
-| feat: add new feature | Minor release |
-| feat!: change function signature | 🚨 Major release |
-| chore: cleanup | No release |
-| refactor: simplify logic <br/> BREAKING CHANGE: removed old args | 🚨 Major |

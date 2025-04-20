@@ -1,3 +1,10 @@
+# [2.0.0-dev.2](https://github.com/Arunkumarcs/rule-engine/compare/v2.0.0-dev.1...v2.0.0-dev.2) (2025-04-14)
+
+
+### Bug Fixes
+
+* use commitizen ([dfdb6ef](https://github.com/Arunkumarcs/rule-engine/commit/dfdb6ef1fdb9fbd4217b9c05bb554bb20a2e974f))
+
 # [2.0.0-dev.1](https://github.com/Arunkumarcs/rule-engine/compare/v1.6.0-dev.1...v2.0.0-dev.1) (2025-04-14)
 
 # [1.6.0-dev.1](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.2-dev.2...v1.6.0-dev.1) (2025-04-14)

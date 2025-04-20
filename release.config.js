@@ -2,19 +2,7 @@ module.exports = {
   branches: [
     "main",
     {
-      name: "beta",
-      prerelease: true, // auto suffixes like `-beta.1`
-    },
-    {
-      name: "alpha",
-      prerelease: true, // specific pre-release label
-    },
-    {
       name: "dev",
-      prerelease: true, // specific pre-release label
-    },
-    {
-      name: "rc",
       prerelease: true, // specific pre-release label
     },
   ],
