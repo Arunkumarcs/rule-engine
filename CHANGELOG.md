@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/Arunkumarcs/rule-engine/compare/v3.0.0...v3.0.1) (2025-04-20)
+
+
+### Bug Fixes
+
+* **npm keywords:** npm keywords ([#62](https://github.com/Arunkumarcs/rule-engine/issues/62)) ([0a13d77](https://github.com/Arunkumarcs/rule-engine/commit/0a13d774c212a15287eced41fb9b76e7218684f0))
+
 # [3.0.0](https://github.com/Arunkumarcs/rule-engine/compare/v2.0.0...v3.0.0) (2025-04-20)
 
 # [2.0.0](https://github.com/Arunkumarcs/rule-engine/compare/v1.5.1...v2.0.0) (2025-04-20)
