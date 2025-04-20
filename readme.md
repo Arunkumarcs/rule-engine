@@ -25,11 +25,13 @@ yarn add @arunkumar_h/rule-engine
 
 ## 🧠 Features
 
-- ✅ Supports `and`, `or`, and nested logical conditions
-- 🔧 Custom operators and facts
-- 📜 Written in TypeScript, fully typed
-- 🚀 Lightweight
-- 🔎 Built-in [JMESPath](https://jmespath.org/) support for powerful data querying
+- ✅ Supports `and`, `or`, and nested logical conditions  
+- 🔧 Custom operators and facts  
+- 📜 Written in TypeScript, fully typed  
+- 🚀 Lightweight  
+- 🔎 Built-in [JMESPath](https://jmespath.org/) support for powerful data querying  
+- 🧰 Uses [`lru-cache`](https://isaacs.github.io/node-lru-cache/) for efficient in-memory caching
+
 
 ### Default Operators
 

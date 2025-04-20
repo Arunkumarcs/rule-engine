@@ -49,7 +49,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "jmespath": "^0.16.0"
+    "jmespath": "^0.16.0",
+    "lru-cache": "^11.1.0"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",

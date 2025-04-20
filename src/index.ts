@@ -1,5 +1,6 @@
 import { N_Engine } from "./types";
 import { get, defaultOperators, memoize, typeGuardCondition } from "./helper";
+import { LRUCache } from "lru-cache";
 
 export {
   includes,
@@ -10,12 +11,51 @@ export {
   typeGuardCondition,
 } from "./helper";
 
+
 class Engine {
   protected namedRules: Map<string, N_Engine.Rule> = new Map();
   protected namedConditions: Map<string, N_Engine.Condition> = new Map();
   protected namedOperators: Map<string, N_Engine.OperatorCallback> = new Map(
     Object.entries(defaultOperators)
   );
+  protected cache: LRUCache<string, boolean> | null;
+  protected cacheOption: LRUCache.Options<string, boolean, unknown> = {
+    max: 500,
+    maxSize: 5000,
+    ttl: 1000 * 60 * 5,
+    allowStale: false,
+    updateAgeOnGet: false,
+    updateAgeOnHas: false,
+
+    // for use with tracking overall storage size
+    // sizeCalculation: (value, key) => {
+    //   return 1;
+    // },
+
+    // for use when you need to clean up something when objects
+    // are evicted from the cache
+    // dispose: (value, key, reason) => {
+    // freeFromMemoryOrWhatever(value);
+    // },
+
+    // for use when you need to know that an item is being inserted
+    // note that this does NOT allow you to prevent the insertion,
+    // it just allows you to know about it.
+    // onInsert: (value: any, key: any, reason: any) => {},
+
+    // async method to use for cache.fetch(), for
+    // stale-while-revalidate type of behavior
+    // fetchMethod: async (key, staleValue, { options, signal, context }) => {},
+  };
+
+  constructor(
+    cacheOptions: Partial<LRUCache.Options<string, boolean, unknown>> = {}
+  ) {
+    this.cache = new LRUCache({
+      ...this.cacheOption,
+      ...cacheOptions,
+    });
+  }
 
   get rule() {
     return Object.fromEntries(this.namedRules);
@@ -82,7 +122,6 @@ class Engine {
     fact: object,
     { path, operator, value }: N_Engine.ConditionOperation
   ): Promise<boolean> {
-    // TODO: optimize
     const actual = get(fact, path);
 
     const fn = this.namedOperators.get(operator);
@@ -151,8 +190,13 @@ class Engine {
       return this.evaluateRule;
     }
 
+    if (!this.cache) {
+      throw new Error("Cache is not initialized");
+    }
+
     // TODO: Provision for custom cache key
     return memoize(
+      this.cache,
       this.evaluateRule,
       (fact: object) => `${ruleName}-${JSON.stringify(fact)}`
     );
@@ -165,10 +209,9 @@ class Engine {
       throw new Error(`Rule "${ruleName}" not found`);
     }
 
-    const result = await(await this.cachedEvaluateRule(ruleName, rule))(
-      fact,
-      rule.condition
-    );
+    const result = await (
+      await this.cachedEvaluateRule(ruleName, rule)
+    )(fact, rule.condition);
 
     if (result) {
       if (typeof rule.onSuccess === "function") {

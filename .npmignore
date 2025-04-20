@@ -8,6 +8,8 @@ src/
 .gitignore
 .npmignore
 CHANGELOG.md
+CODEOWNER
+COMMIT_INSTRUCTION.md
 jest.config.js
 package-lock.json
 release.config.js
