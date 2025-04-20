@@ -1,23 +1,16 @@
 import { N_Engine } from "./types";
-import memoize from "lodash.memoize";
-import { includes, endsWith, startsWith, get } from "./helper";
+import { get, defaultOperators, memoize, typeGuardCondition } from "./helper";
+import { LRUCache } from "lru-cache";
 
-const defaultOperators = {
-  "%like%": async (a: string, b: string) => includes(a, b),
-  "%like": async (a: string, b: string) => endsWith(a, b),
-  "like%": async (a: string, b: string) => startsWith(a, b),
-  "===": async (a: any, b: any) => a === b,
-  "==": async (a: any, b: any) => a == b,
-  "!==": async (a: any, b: any) => a !== b,
-  "!=": async (a: any, b: any) => a != b,
-  ">": async (a: any, b: any) => a > b,
-  ">=": async (a: any, b: any) => a >= b,
-  "<": async (a: any, b: any) => a < b,
-  "<=": async (a: any, b: any) => a <= b,
-  in: async (a: any, b: any[]) => includes(b, a),
-  "!in": async (a: any, b: any[]) => !includes(b, a),
-  includes: async (a: any[], b: any) => includes(a, b),
-};
+export {
+  includes,
+  endsWith,
+  startsWith,
+  get,
+  memoize,
+  typeGuardCondition,
+} from "./helper";
+
 
 class Engine {
   protected namedRules: Map<string, N_Engine.Rule> = new Map();
@@ -25,6 +18,44 @@ class Engine {
   protected namedOperators: Map<string, N_Engine.OperatorCallback> = new Map(
     Object.entries(defaultOperators)
   );
+  protected cache: LRUCache<string, boolean> | null = null;
+  protected cacheOption: LRUCache.Options<string, boolean, unknown> = {
+    max: 500,
+    ttl: 1000 * 60 * 5,
+    allowStale: false,
+    updateAgeOnGet: false,
+    updateAgeOnHas: false,
+    // maxSize: 5000,
+
+    // for use with tracking overall storage size
+    // sizeCalculation: (value, key) => {
+    //   return 1;
+    // },
+
+    // for use when you need to clean up something when objects
+    // are evicted from the cache
+    // dispose: (value, key, reason) => {
+    // freeFromMemoryOrWhatever(value);
+    // },
+
+    // for use when you need to know that an item is being inserted
+    // note that this does NOT allow you to prevent the insertion,
+    // it just allows you to know about it.
+    // onInsert: (value: any, key: any, reason: any) => {},
+
+    // async method to use for cache.fetch(), for
+    // stale-while-revalidate type of behavior
+    // fetchMethod: async (key, staleValue, { options, signal, context }) => {},
+  };
+
+  constructor(
+    cacheOptions: Partial<LRUCache.Options<string, boolean, unknown>> = {}
+  ) {
+    this.cache = new LRUCache({
+      ...this.cacheOption,
+      ...cacheOptions,
+    });
+  }
 
   get rule() {
     return Object.fromEntries(this.namedRules);
@@ -87,11 +118,10 @@ class Engine {
     this.addLoop(list);
   }
 
-  protected async doOperation(
+  protected async executeOperation(
     fact: object,
     { path, operator, value }: N_Engine.ConditionOperation
   ): Promise<boolean> {
-    // TODO: optimize
     const actual = get(fact, path);
 
     const fn = this.namedOperators.get(operator);
@@ -103,23 +133,15 @@ class Engine {
     return fn(actual, value);
   }
 
-  protected async evaluateConditionOperation(
+  protected async executeConditionOperation(
     fact: object,
     cond: N_Engine.ConditionType
   ) {
     if (typeof cond === "string" || "and" in cond || "or" in cond) {
       return this.evaluateRule(fact, cond);
     } else if ("operator" in cond) {
-      return this.doOperation(fact, cond);
+      return this.executeOperation(fact, cond);
     }
-  }
-
-  protected guardCondition(
-    condition: object
-  ): condition is N_Engine.ConditionAnd | N_Engine.ConditionOr {
-    return (
-      typeof condition === "object" && ("and" in condition || "or" in condition)
-    );
   }
 
   protected async evaluateRule(
@@ -137,39 +159,55 @@ class Engine {
       throw new Error(`Condition "${condition}" not found`);
     }
 
-    if (this.guardCondition(namedCondition) && "and" in namedCondition) {
-      return (
-        await Promise.all(
-          namedCondition.and.map(async (cond: N_Engine.ConditionType) =>
-            this.evaluateConditionOperation(fact, cond)
+    if (typeGuardCondition(namedCondition)) {
+      if ("and" in namedCondition) {
+        return (
+          await Promise.all(
+            namedCondition.and.map(async (cond: N_Engine.ConditionType) =>
+              this.executeConditionOperation(fact, cond)
+            )
           )
-        )
-      ).every((result) => result);
-    }
-    if (this.guardCondition(namedCondition) && "or" in namedCondition) {
-      return (
-        await Promise.all(
-          namedCondition.or.map(async (cond: N_Engine.ConditionType) =>
-            this.evaluateConditionOperation(fact, cond)
+        ).every((result) => result);
+      } else {
+        return (
+          await Promise.all(
+            namedCondition.or.map(async (cond: N_Engine.ConditionType) =>
+              this.executeConditionOperation(fact, cond)
+            )
           )
-        )
-      ).some((result) => result);
+        ).some((result) => result);
+      }
     }
-    return false;
+    throw new Error(`Condition "${JSON.stringify(condition)}" is not valid`);
   }
 
-  protected async cachedRuleEvaluate(ruleName: string, rule: N_Engine.Rule) {
+  protected async memoize(resolver: (...args: any[]) => string) {
+    const self = this;
+    return async function (...args: any[]) {
+      const key = await resolver(...args);
+
+      if (self.cache && self.cache.has(key)) {
+        return self.cache.get(key);
+      }
+
+      const result = await self.evaluateRule(args[0], args[1]);
+
+      if (self.cache) {
+        self.cache.set(key, result);
+      }
+      return result;
+    };
+  }
+
+  protected async cachedEvaluateRule(ruleName: string, rule: N_Engine.Rule) {
     const cacheMethod = rule.cache ?? true;
 
     if (cacheMethod === false) {
       return this.evaluateRule;
     }
 
-    const methodToCache = this.evaluateRule;
-
     // TODO: Provision for custom cache key
-    return memoize(
-      methodToCache,
+    return this.memoize(
       (fact: object) => `${ruleName}-${JSON.stringify(fact)}`
     );
   }
@@ -180,10 +218,11 @@ class Engine {
     if (!rule) {
       throw new Error(`Rule "${ruleName}" not found`);
     }
-
-    const result = await (
-      await this.cachedRuleEvaluate(ruleName, rule)
-    )(fact, rule.condition);
+    const resultCallback = await this.cachedEvaluateRule(ruleName, rule);
+    const result = await Reflect.apply(resultCallback, this, [
+      fact,
+      rule.condition,
+    ]);
 
     if (result) {
       if (typeof rule.onSuccess === "function") {
