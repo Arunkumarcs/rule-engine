@@ -217,4 +217,13 @@ Badges above represent live coverage stats for:
 
 ## 📄 License
 
-[MIT](./LICENSE)
+- **Code**: Licensed under the [MIT License](./LICENSE)
+- **Assets & Documentation**: Licensed under the [CC BY-SA 4.0 License](./LICENSE.assets)
+
+Some non-code content (e.g. diagrams, images, markdown docs) is licensed under the
+Creative Commons Attribution-ShareAlike 4.0 International License.
+See [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/) for more info.
+
+
+<!-- ## 🧾 SBOM
+A [Software Bill of Materials](./sbom.json) is included to list all open source dependencies and licenses used in this package. -->

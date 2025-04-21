@@ -1,3 +1,6 @@
+☐ https://fossa.com/ | https://app.fossa.com/projects
+☐ https://opensource.org/
+
 ☐ 🚀 Advanced Feature Ideas
     ☐ Rule Grouping & Namespacing
         ☐ Group rules under namespaces (e.g., "billing.*", "access-control.admin")
