@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/Arunkumarcs/rule-engine/compare/v3.1.0...v3.1.1) (2025-04-22)
+
+
+### Bug Fixes
+
+* **added fossa in readme:** added fossa ([e85bf57](https://github.com/Arunkumarcs/rule-engine/commit/e85bf57b23bd6d2e5b53ad951c1ac3d3caa743a9))
+
 # [3.1.0](https://github.com/Arunkumarcs/rule-engine/compare/v3.0.2...v3.1.0) (2025-04-22)
 
 
