@@ -1,4 +1,5 @@
-import Engine, {
+import {
+  Engine,
   includes,
   endsWith,
   startsWith,
@@ -137,7 +138,6 @@ describe("Engine positive result", () => {
     expect(await engine.run({ name: "Joh" }, "test2")).toBe("fail");
   });
 });
-
 
 describe("Engine positive result method chaining", () => {
   it("should be defined", () => {

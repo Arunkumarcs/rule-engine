@@ -14,7 +14,8 @@
 [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
 
 ***
-**Breaking Change:** Please move to v3.0.1 or later.. [More info here.](#breaking-change)
+**Breaking Change:** Please move to v3.1.0 or later. 
+<!-- [More info here.](#breaking-change) -->
 ***
 
 A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
@@ -220,7 +221,7 @@ Badges above represent live coverage stats for:
 - [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
 - [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
 
-## Breaking Change
+<!-- ## Breaking Change
 
 Due to a breaking change in
 the [rule-engine](https://github.com/Arunkumarcs/rule-engine/releases/tag/v3.0.1)
@@ -229,11 +230,10 @@ old versions might break when newly installed from `npm`.
 - 🔎 Native [JMESPath](https://jmespath.org/)  support for data querying
 - 🧰 Built-in caching using [`lru-cache`](https://isaacs.github.io/node-lru-cache/)  for better performance
 
-**Therefore, please move to v3.0.1 or later.**
-
+**Therefore, please move to vv3.0.3 or later.**
+ -->
 
 ## Author
-
 **Arunkumar H**
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-arunkumar--h-blue?logo=linkedin)](https://www.linkedin.com/in/arunkumar-h-0716b6104)
@@ -242,14 +242,13 @@ old versions might break when newly installed from `npm`.
 
 
 ## 📄 License
-
 - **Code**: Licensed under the [MIT License](./LICENSE)
 - **Assets & Documentation**: Licensed under the [CC BY-SA 4.0 License](./LICENSE.assets)
 
 Some non-code content (e.g. diagrams, images, markdown docs) is licensed under the
 Creative Commons Attribution-ShareAlike 4.0 International License.
-See [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/) for more info.
 
+See [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/) for more info.
 
 <!-- ## 🧾 SBOM
 A [Software Bill of Materials](./sbom.json) is included to list all open source dependencies and licenses used in this package. -->

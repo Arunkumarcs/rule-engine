@@ -11,8 +11,7 @@ export {
   typeGuardCondition,
 } from "./helper";
 
-
-class Engine {
+export class Engine {
   protected namedRules: Map<string, N_Engine.Rule> = new Map();
   protected namedConditions: Map<string, N_Engine.Condition> = new Map();
   protected namedOperators: Map<string, N_Engine.OperatorCallback> = new Map(
@@ -241,5 +240,3 @@ class Engine {
     }
   }
 }
-
-export default Engine;

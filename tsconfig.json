@@ -5,12 +5,14 @@
     "module": "ESNext",
     "declaration": true,
     "declarationDir": "dist",
-    "outDir": "dist",
+    "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
-    "skipLibCheck": true
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "emitDeclarationOnly": false,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/__tests__/**"]
 }
