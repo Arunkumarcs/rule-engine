@@ -1,3 +1,17 @@
+## [3.1.1](https://github.com/Arunkumarcs/rule-engine/compare/v3.1.0...v3.1.1) (2025-04-22)
+
+
+### Bug Fixes
+
+* **added fossa in readme:** added fossa ([e85bf57](https://github.com/Arunkumarcs/rule-engine/commit/e85bf57b23bd6d2e5b53ad951c1ac3d3caa743a9))
+
+# [3.1.0](https://github.com/Arunkumarcs/rule-engine/compare/v3.0.2...v3.1.0) (2025-04-22)
+
+
+### Features
+
+* **fixed build issues:** fixed build issues ([#67](https://github.com/Arunkumarcs/rule-engine/issues/67)) ([7bf7954](https://github.com/Arunkumarcs/rule-engine/commit/7bf79540c0b41fda3c6f8c4838297fb905f6a5f6))
+
 ## [3.0.2](https://github.com/Arunkumarcs/rule-engine/compare/v3.0.1...v3.0.2) (2025-04-22)
 
 
