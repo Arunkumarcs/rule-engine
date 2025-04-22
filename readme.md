@@ -252,7 +252,7 @@ See [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.or
 
 The detailed list of Open Source dependencies can be found in Fossa report.
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArunkumarcs%2Frule-engine.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FArunkumarcs%2Frule-engine?ref=badge_large&issueType=license)
+<!-- [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArunkumarcs%2Frule-engine.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FArunkumarcs%2Frule-engine?ref=badge_large&issueType=license) -->
 
 <!-- ## 🧾 SBOM
 A [Software Bill of Materials](./sbom.json) is included to list all open source dependencies and licenses used in this package. -->
