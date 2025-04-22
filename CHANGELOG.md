@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/Arunkumarcs/rule-engine/compare/v3.0.1...v3.0.2) (2025-04-22)
+
+
+### Bug Fixes
+
+* **feature for method chaining:** feature for method chaining ([#66](https://github.com/Arunkumarcs/rule-engine/issues/66)) ([890da0d](https://github.com/Arunkumarcs/rule-engine/commit/890da0d3c686f2284f5e1d51e5ec55fbb238f4ae))
+
 ## [3.0.1](https://github.com/Arunkumarcs/rule-engine/compare/v3.0.0...v3.0.1) (2025-04-20)
 
 
