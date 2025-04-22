@@ -11,20 +11,22 @@
 [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
 [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
 
-> A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
+***
+**Breaking Change:** Please move to v3.0.1 or later.. [More info here.](#breaking-change)
+***
+
+A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
 
 ## 📦 Installation
-
 ```bash
 npm install @arunkumar_h/rule-engine
 ```
-
 ```bash
 yarn add @arunkumar_h/rule-engine
 ```
 
-## 🧠 Features
 
+## 🧠 Features
 - ✅ Logical condition support (and, or, nested expressions)
 - 🔧 Custom operators and named conditions
 - 📜 Fully typed with TypeScript
@@ -32,12 +34,28 @@ yarn add @arunkumar_h/rule-engine
 - 🔎 Native [JMESPath](https://jmespath.org/)  support for data querying
 - 🧰 Built-in caching using [`lru-cache`](https://isaacs.github.io/node-lru-cache/)  for better performance
 
-## ⚙️ Default Operators
 
+| Feature / Capability | @arunkumar_h/rule-engine |
+| --- | --- |
+| ✅ Written in TypeScript | ✅ Native TypeScript with full type safety |
+| ⚙️ Custom Operators | ✅ Built-in support, sync or async | 
+| 🧠 Named Conditions | ✅ Supports reusable named conditions | 
+| 🧱 Nested Logical Trees | ✅ Fully supported (and, or, deeply nested) |
+| 🔍 Data Query Language | ✅ Built-in JMESPath support | 
+| 🚀 Performance Optimizations | ✅ Rule-level cache with lru-cache |
+| 🧰 Extensibility | ✅ Add custom operators, conditions dynamically |
+| ⚖️ Lightweight | ✅ Small and focused build | 
+| 🧪 Testing Coverage Ready | ✅ Easy to unit test each rule block |
+| 🔁 Dynamic Rule Loading | ✅ Add/modify rules at runtime | 
+| 🔄 Async Support | ✅ Full async engine and operators |
+| 📦 Modern Packaging | ✅ ESM + CJS + .d.ts types out of the box |
+
+
+## ⚙️ Default Operators
 The following operators are available by default:
 
 | Operator | Description |
-| --- | --- |
+| ------ | ------ |
 | === | Strict equality |
 | !== | Strict inequality |
 | == | Loose equality |
@@ -54,8 +72,8 @@ The following operators are available by default:
 | includes | Array includes value |
 | !includes | Array does not include value |
 
-## 🔨 Basic Usage
 
+## 🔨 Basic Usage
 - `condition` This containes `and` and `or` as main block.
 - `onSuccess` value that will be returned or function that will be invoked if the condition is satisfied.
 - `onFail` value that will be returned or function that will be invoked if the condition fails.
@@ -94,8 +112,31 @@ engine.addRule(rule);
 const fact = {age: 16, skills: ["ts", "php"], language: "tamil"}; // Your data to be validated 
 const result = await engineObj.run(fact, "testRule");
 ```
-## 🔍 API Overview
 
+
+## 🔧 Custom Operator Example
+```javascript
+engine.addOperator({
+  isEven: (factValue) => factValue % 2 === 0,
+});
+
+const rule = {
+  evenCheck: {
+    condition: {
+      and: [
+        { path: "number", operator: "isEven" },
+      ],
+    },
+    onSuccess: "Number is even",
+    onFail: "Number is odd",
+  },
+};
+
+const result = await engine.run({ number: 8 }, "evenCheck");
+```
+
+
+## 🔍 API Overview
 ```mermaid
 flowchart TB
     Rule --> onSuccess
@@ -105,7 +146,6 @@ flowchart TB
 ```
 
 ### Engine API
-
 ```javascript
 let engine = new Engine() 
 ```
@@ -125,7 +165,6 @@ run(fact, ruleName)
 
 
 ## ⚡ Advanced Usage
-
 - Adding named conditions.
 - Adding named operators.
 - Rule wise cache disabling.
@@ -170,26 +209,6 @@ const fact = {age: 16, skills: ["ts", "php"], language: "tamil"}; // Your data t
 const result = await engineObj.run(fact, "testRule");
 ```
 
-## 🔧 Custom Operator Example
-```javascript
-engine.addOperator({
-  isEven: (factValue) => factValue % 2 === 0,
-});
-
-const rule = {
-  evenCheck: {
-    condition: {
-      and: [
-        { path: "number", operator: "isEven" },
-      ],
-    },
-    onSuccess: "Number is even",
-    onFail: "Number is odd",
-  },
-};
-
-const result = await engine.run({ number: 8 }, "evenCheck");
-```
 
 ## 🧪 Test Coverage
 Badges above represent live coverage stats for:
@@ -199,7 +218,36 @@ Badges above represent live coverage stats for:
 - [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
 - [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
 
+## Breaking Change
+
+Due to a breaking change in
+the [rule-engine](https://github.com/Arunkumarcs/rule-engine/releases/tag/v3.0.1)
+old versions might break when newly installed from `npm`.
+
+- 🔎 Native [JMESPath](https://jmespath.org/)  support for data querying
+- 🧰 Built-in caching using [`lru-cache`](https://isaacs.github.io/node-lru-cache/)  for better performance
+
+**Therefore, please move to v3.0.1 or later.**
+
+
+## Author
+
+**Arunkumar H**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-arunkumar--h-blue?logo=linkedin)](https://www.linkedin.com/in/arunkumar-h-0716b6104)
+[![GitHub](https://img.shields.io/badge/GitHub-Arunkumarcs-black?logo=github)](https://github.com/Arunkumarcs)
+[![Email](https://img.shields.io/badge/Email-arunkumar.h.in.1991@gmail.com-red?logo=gmail)](mailto:arunkumar.h.in.1991@gmail.com)
+
 
 ## 📄 License
 
-[MIT](./LICENSE)
+- **Code**: Licensed under the [MIT License](./LICENSE)
+- **Assets & Documentation**: Licensed under the [CC BY-SA 4.0 License](./LICENSE.assets)
+
+Some non-code content (e.g. diagrams, images, markdown docs) is licensed under the
+Creative Commons Attribution-ShareAlike 4.0 International License.
+See [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/) for more info.
+
+
+<!-- ## 🧾 SBOM
+A [Software Bill of Materials](./sbom.json) is included to list all open source dependencies and licenses used in this package. -->

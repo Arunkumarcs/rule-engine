@@ -106,18 +106,6 @@ class Engine {
     }
   }
 
-  public addRule(list: N_Engine.NamedRules) {
-    this.addLoop(list);
-  }
-
-  public addCondition(list: N_Engine.NamedConditions) {
-    this.addLoop(list);
-  }
-
-  public addOperator(list: N_Engine.NamedOperators) {
-    this.addLoop(list);
-  }
-
   protected async executeOperation(
     fact: object,
     { path, operator, value }: N_Engine.ConditionOperation
@@ -210,6 +198,21 @@ class Engine {
     return this.memoize(
       (fact: object) => `${ruleName}-${JSON.stringify(fact)}`
     );
+  }
+
+  public addRule(list: N_Engine.NamedRules) {
+    this.addLoop(list);
+    return this;
+  }
+
+  public addCondition(list: N_Engine.NamedConditions) {
+    this.addLoop(list);
+    return this;
+  }
+
+  public addOperator(list: N_Engine.NamedOperators) {
+    this.addLoop(list);
+    return this;
   }
 
   public async run(fact: object, ruleName: string) {

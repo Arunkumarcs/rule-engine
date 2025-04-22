@@ -1,8 +1,48 @@
+☐ https://fossa.com/ | https://app.fossa.com/projects
+☐ https://opensource.org/
+☐ https://snyk.io/
+
+
+☐ 🚀 Advanced Feature Ideas
+    ☐ Rule Grouping & Namespacing
+        ☐ Group rules under namespaces (e.g., "billing.*", "access-control.admin")
+        ☐ Enable/disable entire groups
+        ☐ Useful for toggling feature-specific logic
+    ☐ Rule Inheritance & Composition
+        ☐ Let rules extend other rules with overrides
+    ☐ Rule Versioning
+        ☐ Allow versioned rules (v1, v2, etc.)
+        ☐ Useful in production environments for A/B testing and audits
+
+☐ 🧩 Extensibility & Dev Experience
+    ☐ Plugin System
+        ☐ Register lifecycle hooks or custom DSLs
+        ☐ Example use case: auto-load rules from DB, encrypt sensitive facts, etc.
+    ☐ Built-in Rule Validators
+        ☐ Validate for:
+            ☐ Missing facts
+            ☐ Circular dependencies
+            ☐ Invalid operators
+            ☐ Could throw or warn in dev mode
+    ☐ Rule Engine as Middleware
+        ☐ Express / Fastify middleware:
+            ☐ app.use(ruleEngine.middleware({ rules }))
+            ☐ Great for access control, rate limits, etc.
+
+☐ Rule Store Modules
+    ☐ Plugins for loading rules from:
+        ☐ Filesystem
+        ☐ Redis / MongoDB
+        ☐ HTTP APIs
+    ☐ Visual Rule Editor
+        ☐ UI tool to edit rule conditions
+        ☐ Could export as JSON/TS
+        ☐ Could integrate with Docusaurus site you're working on
+
 ✔ Add support for `https://www.npmjs.com/package/jsonpath-plus` @done(25-04-14 16:41)
 ✔ commitizen @done(25-04-19 08:48)
-☐ Add support for `https://www.npmjs.com/package/hash-it`
-
-☐ Badges
+✘ Add support for `https://www.npmjs.com/package/hash-it` @cancelled(25-04-21 08:52)
+✔ Badges @done(25-04-21 08:59)
     - https://badge.fury.io/for/js/json-rules-engine
     - https://packagephobia.com/result?p=json-rules-engine
     ✔ https://shields.io/docs @done(25-04-14 16:43)

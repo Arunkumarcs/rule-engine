@@ -2,6 +2,16 @@
   "name": "@arunkumar_h/rule-engine",
   "version": "3.0.1",
   "license": "MIT",
+  "author": {
+    "name": "Arunkumar H",
+    "email": "arunkumar.h.in.1991@gmail.com",
+    "url": "https://github.com/Arunkumarcs"
+  },
+  "social": {
+    "linkedin": "https://www.linkedin.com/in/arunkumar-h-0716b6104/",
+    "github": "https://github.com/Arunkumarcs"
+  },
+  "description": "A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.",
   "keywords": [
     "rule-engine",
     "json-rules",
@@ -44,7 +54,6 @@
     "test:coverage": "npm test --coverage",
     "test:badges": "npm run test:coverage  && jest-coverage-badges output ./badges",
     "build": "tsc",
-    "build:tsup": "tsup src/index.ts --format esm,cjs --dts --out-dir dist",
     "prepare": "husky install",
     "semantic-release": "semantic-release",
     "commit": "cz"
@@ -65,7 +74,6 @@
     "semantic-release": "^24.2.3",
     "semantic-release-cli": "^5.4.6",
     "ts-jest": "^29.3.1",
-    "tsup": "^8.4.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
