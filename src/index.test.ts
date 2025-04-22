@@ -138,6 +138,44 @@ describe("Engine positive result", () => {
   });
 });
 
+
+describe("Engine positive result method chaining", () => {
+  it("should be defined", () => {
+    expect(Engine).toBeDefined();
+    expect(memoize).toBeDefined();
+    expect(includes).toBeDefined();
+    expect(endsWith).toBeDefined();
+    expect(startsWith).toBeDefined();
+    expect(get).toBeDefined();
+    expect(typeGuardCondition).toBeDefined();
+  });
+
+  it("direct positive result", async () => {
+    const engine = new Engine();
+
+    engine
+      .addRule(mockRule)
+      .addCondition(mockCondition)
+      .addOperator(mockOperator);
+
+    expect(
+      await engine.run({ name: "John", age: 20, department: "IT" }, "test")
+    ).toBe("success");
+    expect(await engine.run({ name: "Joh" }, "test")).toBe("fail");
+    expect(await engine.run({ name: "Joh" }, "test")).toBe("fail");
+    expect(await engine.run({ name: "Joh" }, "test")).toBe("fail");
+
+    expect(engine.rule).toMatchObject(mockRule);
+    expect(engine.condition).toMatchObject({
+      checkAge: { and: [{ operator: "gte", path: "age", value: 18 }] },
+    });
+    expect(engine.operator).toMatchObject({
+      ...defaultOperators,
+      ...mockOperator,
+    });
+  });
+});
+
 describe("Engine negative result", () => {
   it("direct negative result", async () => {
     const engine = new Engine();
