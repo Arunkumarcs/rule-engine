@@ -1,5 +1,4 @@
 # @arunkumar_h/rule-engine
-A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
 
 [![NPM Version](https://img.shields.io/npm/v/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
 [![NPM Downloads](https://img.shields.io/npm/dm/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
@@ -12,6 +11,11 @@ A lightweight and extensible rule engine built with TypeScript and Node.js. Defi
 [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
 [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
 
+***
+**Breaking Change:** Please move to v3.0.1 or later.. [More info here.](#breaking-change)
+***
+
+A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
 
 ## 📦 Installation
 ```bash
@@ -213,6 +217,26 @@ Badges above represent live coverage stats for:
 - [![badge-functions](badges/badge-functions.svg)](badges/badge-functions.svg)
 - [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
 - [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
+
+## Breaking Change
+
+Due to a breaking change in
+the [rule-engine](https://github.com/Arunkumarcs/rule-engine/releases/tag/v3.0.1)
+old versions might break when newly installed from `npm`.
+
+- 🔎 Native [JMESPath](https://jmespath.org/)  support for data querying
+- 🧰 Built-in caching using [`lru-cache`](https://isaacs.github.io/node-lru-cache/)  for better performance
+
+**Therefore, please move to v3.0.1 or later.**
+
+
+## Author
+
+**Arunkumar H**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-arunkumar--h-blue?logo=linkedin)](https://www.linkedin.com/in/arunkumar-h-0716b6104)
+[![GitHub](https://img.shields.io/badge/GitHub-Arunkumarcs-black?logo=github)](https://github.com/Arunkumarcs)
+[![Email](https://img.shields.io/badge/Email-arunkumar.h.in.1991@gmail.com-red?logo=gmail)](mailto:arunkumar.h.in.1991@gmail.com)
 
 
 ## 📄 License

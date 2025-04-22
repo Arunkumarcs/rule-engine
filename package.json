@@ -2,6 +2,16 @@
   "name": "@arunkumar_h/rule-engine",
   "version": "3.0.1",
   "license": "MIT",
+  "author": {
+    "name": "Arunkumar H",
+    "email": "arunkumar.h.in.1991@gmail.com",
+    "url": "https://github.com/Arunkumarcs"
+  },
+  "social": {
+    "linkedin": "https://www.linkedin.com/in/arunkumar-h-0716b6104/",
+    "github": "https://github.com/Arunkumarcs"
+  },
+  "description": "A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.",
   "keywords": [
     "rule-engine",
     "json-rules",
