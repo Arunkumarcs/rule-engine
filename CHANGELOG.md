@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/Arunkumarcs/rule-engine/compare/v3.1.1...v3.1.2) (2025-04-22)
+
+
+### Bug Fixes
+
+* **disable fossa:** disable fossa ([eb8c210](https://github.com/Arunkumarcs/rule-engine/commit/eb8c2100a2c561f964516f7d986c6cd3edde0c05))
+
 ## [3.1.1](https://github.com/Arunkumarcs/rule-engine/compare/v3.1.0...v3.1.1) (2025-04-22)
 
 
