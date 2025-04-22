@@ -250,12 +250,6 @@ old versions might break when newly installed from `npm`.
 ## 📄 License
 
 - **Code**: Licensed under the [MIT License](./LICENSE)
-- **Assets & Documentation**: Licensed under the [CC BY-SA 4.0 License](./LICENSE.assets)
-
-Some non-code content (e.g. diagrams, images, markdown docs) is licensed under the
-Creative Commons Attribution-ShareAlike 4.0 International License.
-
-See [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/) for more info.
 
 The detailed list of Open Source dependencies can be found in Fossa report.
 
