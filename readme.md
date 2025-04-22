@@ -14,7 +14,8 @@
 [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
 
 ***
-**Breaking Change:** Please move to v3.0.1 or later.. [More info here.](#breaking-change)
+**Breaking Change:** Please move to v3.1.0 or later. 
+<!-- [More info here.](#breaking-change) -->
 ***
 
 A lightweight and extensible rule engine built with TypeScript and Node.js. Define complex business rules and evaluate conditions easily using a simple JSON structure.
@@ -220,7 +221,7 @@ Badges above represent live coverage stats for:
 - [![badge-lines](badges/badge-lines.svg)](badges/badge-lines.svg)
 - [![badge-statements](badges/badge-statements.svg)](badges/badge-statements.svg)
 
-## Breaking Change
+<!-- ## Breaking Change
 
 Due to a breaking change in
 the [rule-engine](https://github.com/Arunkumarcs/rule-engine/releases/tag/v3.0.1)
@@ -229,8 +230,8 @@ old versions might break when newly installed from `npm`.
 - 🔎 Native [JMESPath](https://jmespath.org/)  support for data querying
 - 🧰 Built-in caching using [`lru-cache`](https://isaacs.github.io/node-lru-cache/)  for better performance
 
-**Therefore, please move to v3.0.1 or later.**
-
+**Therefore, please move to vv3.0.3 or later.**
+ -->
 
 ## Author
 
