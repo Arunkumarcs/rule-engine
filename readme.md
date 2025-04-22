@@ -1,5 +1,7 @@
 # @arunkumar_h/rule-engine
 
+
+[![Known Vulnerabilities](https://snyk.io/test/github/Arunkumarcs/rule-engine/badge.svg)](https://snyk.io/test/github/Arunkumarcs/rule-engine)
 [![NPM Version](https://img.shields.io/npm/v/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
 [![NPM Downloads](https://img.shields.io/npm/dm/@arunkumar_h/rule-engine)](https://www.npmjs.com/package/@arunkumar_h/rule-engine)
 [![License](https://img.shields.io/npm/l/@arunkumar_h/rule-engine)](https://github.com/arunkumar-h/rule-engine/blob/main/LICENSE)
