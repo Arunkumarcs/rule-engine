@@ -239,19 +239,28 @@ old versions might break when newly installed from `npm`.
 **Therefore, please move to vv3.0.3 or later.**
  -->
 
-## Author
-
-**Arunkumar H**
+<!-- ## Author
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-arunkumar--h-blue?logo=linkedin)](https://www.linkedin.com/in/arunkumar-h-0716b6104)
-[![GitHub](https://img.shields.io/badge/GitHub-Arunkumarcs-black?logo=github)](https://github.com/Arunkumarcs)
-[![Email](https://img.shields.io/badge/Email-arunkumar.h.in.1991@gmail.com-red?logo=gmail)](mailto:arunkumar.h.in.1991@gmail.com)
+[![Email](https://img.shields.io/badge/Email-arunkumar.h.in.1991@gmail.com-red?logo=gmail)](mailto:arunkumar.h.in.1991@gmail.com) -->
+
+<!-- [![GitHub](https://img.shields.io/badge/GitHub-Arunkumarcs-black?logo=github)](https://github.com/Arunkumarcs) -->
+
+
+## Contributors
+
+<a href="https://www.linkedin.com/in/arunkumar-h-0716b6104">
+  <img src="https://avatars.githubusercontent.com/Arunkumarcs" width="40" style="border-radius: 50%;" />
+</a> <a href="https://github.com/mohanc1989">
+  <img src="https://avatars.githubusercontent.com/mohanc1989" width="40" style="border-radius: 50%;" />
+</a>
+
 
 ## 📄 License
 
 - **Code**: Licensed under the [MIT License](./LICENSE)
 
-The detailed list of Open Source dependencies can be found in Fossa report.
+<!-- The detailed list of Open Source dependencies can be found in Fossa report. -->
 
 <!-- [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FArunkumarcs%2Frule-engine.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FArunkumarcs%2Frule-engine?ref=badge_large&issueType=license) -->
 
