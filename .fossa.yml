@@ -1,0 +1,18 @@
+project:
+  name: rule-engine
+  ignore-dev-dependencies: true
+
+analyze:
+  languages:
+    - JavaScript
+    - TypeScript
+
+  package-managers:
+    - npm
+    - pnpm
+
+  # Optional: ignore specific paths if needed
+  exclude:
+    - test/
+    - docs/
+    - examples/
