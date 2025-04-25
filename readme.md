@@ -177,8 +177,8 @@ import { Engine } from "@arunkumar_h/rule-engine";
 
 const engineObj = new Engine();
 
-const condition1 = {
-  condition1: {
+const customCondition = {
+  customCondition: {
     and: [
       { path: "age", operator: "!==", value: 10 },
       {
@@ -196,11 +196,11 @@ const condition1 = {
     ],
   }
 };
-engine.addCondition(condition1);  // adding named condition
+engine.addCondition(customCondition);  // adding named condition
 
 const rule = {
   testRule: {
-    condition: "condition1",  // Using named condition
+    condition: "customCondition",  // Using named condition
     onSuccess: "Success",  //  can be a function or a data
     onFail:  "Fail", //  can be a function or a data
     cache: false  // disable cache for this rule 
