@@ -14,3 +14,5 @@ jest.config.js
 release.config.js
 TODO
 tsconfig.json
+.fossa.yml
+.tsup.config.ts
