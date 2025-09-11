@@ -1,0 +1,30 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Memorize User Prompts Rule
+
+## Applies to
+
+- all files
+
+## Instruction
+
+Always keep track of the user’s prompts inside ".memory/{date}-{month}-{year}.md" and store the session context. file When updating code or documentation, review these prompts and make sure the changes follow them.  
+Do not discard older prompts—append new ones under the "User Prompts" section.
+
+## Why
+
+To ensure continuity across edits and preserve user intent in this project.
+
+---
+
+## User Prompts
+
+1. **Initial Prompt (2025-09-10):**  
+   "When updating code or docs in this project, preserve the user’s original prompt and maintain context between edits. The assistant should treat user prompts as persistent memory."
+
+2. **Follow-up Prompt (2025-09-10):**  
+   "Also include user prompts."
